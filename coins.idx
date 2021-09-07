@@ -1,4 +1,7 @@
-BTC
-ETH
-ADA
-MATIC
+BTC,bitcoin
+ETH,ethereum
+ADA,cardano
+MATIC,matic-network
+MEEB,meeb-master
+DOT,polkadot
+SOL,solana

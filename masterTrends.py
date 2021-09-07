@@ -1,0 +1,57 @@
+from dataModels import *
+from bson.json_util import dumps, loads
+import json, pymongo
+
+###################
+def configIndex():
+    try:        
+        result = dbTrend.create_index([("id", pymongo.DESCENDING),("symbol", pymongo.DESCENDING)],unique=True)
+        return True
+    except Exception as e:
+        print("An Error occured :: ", e)
+        return False
+
+def updateTrend(coin):
+    try:
+        id = coin["id"]
+        print(f"get data {id} success")  
+        query = {"id": id}        
+        set = {"$set": coin}
+        result = dbTrend.update_many(query,set,upsert=True)
+        return result
+    except Exception as e:
+        print("An Error occured :: ", e)
+        return False
+
+def updateParsialTrend(coin):
+    try:
+        id = coin["id"]
+        print(f"get data {id} success")  
+        query = {"id": id}        
+        set = {"$set": {"asset_platform_id": "test"}}
+        result = dbTrend.update_many(query,set,upsert=True)
+        return result
+    except Exception as e:
+        print("An Error occured :: ", e)
+        return False
+
+
+def deleteTrend(symbol=None):
+    try:
+        if symbol is None:
+            dbTrend.delete_many({})
+        elif symbol is not None:
+            query = {"symbolID": symbol}
+            dbTrend.delete_many(query)
+        return True
+    except:
+        return False
+
+def main():
+    print("MasterCoins")
+    # deleteTrend()
+    # configIndex()
+    
+
+if __name__ == "__main__":
+    main()

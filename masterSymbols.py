@@ -4,18 +4,16 @@ import json, pymongo
 
 ###################
 def configIndex():
-    try:
-        collection = dbSymbol
-        result = collection.create_index([("symbolID", pymongo.DESCENDING), ("tickerID", pymongo.ASCENDING)],unique=True)
+    try:        
+        result = dbSymbol.create_index([("symbolID", pymongo.DESCENDING), ("tickerID", pymongo.ASCENDING)],unique=True)
         return True
     except Exception as e:
         print("An Error occured :: ", e)
         return False
 
 def registerSymbols(symbol):    
-    try:
-        collection = dbSymbol    
-        result = collection.insert_one(symbol)
+    try:          
+        result = dbSymbol.insert_one(symbol)
         return True
     except pymongo.errors.DuplicateKeyError:
         # symbolID = symbol["symbolID"]
@@ -25,38 +23,52 @@ def registerSymbols(symbol):
         print("An Error occured :: ", e)
         return False
 
+def updateTickerSymbols(symbolID, tickerID):    
+    query = {'symbolID': symbolID}
+    set = {
+        "$set": {
+            "tickerID" : tickerID
+        }
+    }    
+
+    try:        
+        result = dbSymbol.update_many(query, set)
+        return True
+    except Exception as e:
+        print("An Error occured :: ", e)
+        return False
+
 def searchSymbols(query=None):
-    try:
-        collection = dbSymbol
+    try:        
         if query is None :
-            result = collection.find()
+            result = dbSymbol.find()
         if query is not None :
-            result = collection.find(query)
-        list_result = list(result)
-        json_data = dumps(list_result)
-        return json_data
+            result = dbSymbol.find(query)        
+        listSymbol = []
+        for item in result:
+            listSymbol.append(item)    
+        return listSymbol        
     except Exception as e:
         print("An Error occured :: ", e)
         return False
 
 def getListSymbols():
-    try:
-        collection = dbSymbol
-        result = collection.find({}, {'tickerID': 1, '_id': 0})
-        list_result = list(result)
-        json_data = dumps(list_result)
-        return json_data
+    try:        
+        result = dbSymbol.find({}, {'tickerID': 1, '_id': 0})        
+        listSymbol = []
+        for item in result:
+            listSymbol.append(item["tickerID"])    
+        return listSymbol        
     except Exception as e:
         print("An Error occured :: ", e)
         return False
 
 def unregisterSymbols(query=None):    
-    try:
-        collection = dbSymbol    
+    try:           
         if query is None :
-            result = collection.delete_many({})
+            result = dbSymbol.delete_many({})
         if query is not None :
-            result = collection.delete_many(query)
+            result = dbSymbol.delete_many(query)
         return True
     except Exception as e:
         print("An Error occured :: ", e)
@@ -72,12 +84,11 @@ def enableSymbols(query=None):
         }
     }    
 
-    try:
-        collection = dbSymbol
+    try:        
         if query is None :
-            result = collection.update_many({}, set)
+            result = dbSymbol.update_many({}, set)
         if query is not None :
-            result = collection.update_many(query, set)
+            result = dbSymbol.update_many(query, set)
         return True
     except Exception as e:
         print("An Error occured :: ", e)
@@ -90,12 +101,11 @@ def disableSymbols(query=None):
         }
     }    
 
-    try:
-        collection = dbSymbol
+    try:        
         if query is None :
-            result = collection.update_many({}, set)
+            result = dbSymbol.update_many({}, set)
         if query is not None :
-            result = collection.update_many(query, set)
+            result = dbSymbol.update_many(query, set)
         return True
     except Exception as e:
         print("An Error occured :: ", e)
@@ -106,10 +116,13 @@ def main():
     # asii = Symbols("ASII","stock",False,"ASII.JK")        
     # print(registerSymbols(asii))
     # print(asii["symbolID"])
-    # print(searchSymbols({'symbolID':'ASII'}))
-    # print(getListSymbols())
+    # updateTickerSymbols("MATIC","matic-network")
+    # print(searchSymbols({}))
+    print(getListSymbols())    
     # unregisterSymbols({'symbolID':'ASII'})
     # unregisterSymbols()
+    # coin = Symbols("BTC","crypto",False,"bitcoin")       
+    # print(registerSymbols(coin))
     # configIndex()
     # enableSymbols()
     
@@ -117,16 +130,7 @@ def main():
     # print(emittenJSON)
     # emittenJSONData = json.loads(emittenJSON)
     # print(emittenJSONData['symbolID'])
-
-    with open("coins.idx") as indexCoin:
-        for line in indexCoin:
-            id = line.strip()
-            try:
-                print(f"insert data : {id}")
-                coin = Symbols(id,"crypto",True,id)
-                registerSymbols(coin)
-            except:
-                print("Error!")
+    print("masterSymbols")
 
 if __name__ == "__main__":
     main()
