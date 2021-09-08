@@ -40,7 +40,9 @@ def trendUpdater1():
         tickerID = symbol["tickerID"]        
         if symbolType == "crypto":                        
             try:
+                updateTime = datetime.today()
                 coin = getCoinData(tickerID)                                   
+                coin.update({"updateTime": updateTime})
                 result = updateTrend(coin)                
             except:
                 return False
