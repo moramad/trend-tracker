@@ -13,8 +13,7 @@ def configIndex():
 
 def updateTrend(coin):
     try:
-        id = coin["id"]
-        print(f"get data {id} success")  
+        id = coin["id"]    
         query = {"id": id}        
         set = {"$set": coin}
         result = dbTrend.update_many(query,set,upsert=True)
@@ -22,6 +21,19 @@ def updateTrend(coin):
     except Exception as e:
         print("An Error occured :: ", e)
         return False
+
+def updateHistory(coin):
+    try:
+        id = coin["id"]    
+        updateTime = coin["updateTime"]    
+        query = {"id": id, "updateTime": updateTime}        
+        set = {"$set": coin}
+        result = dbHistory.update_many(query,set,upsert=True)
+        return result
+    except Exception as e:
+        print("An Error occured :: ", e)
+        return False
+
 
 def updateParsialTrend(coin):
     try:

@@ -1,9 +1,19 @@
 from telegram import ParseMode
-from telegram.ext import CommandHandler, Defaults, Updater
+from telegram.ext import Updater, InlineQueryHandler, CommandHandler, Defaults
+import requests
 
 TELEGRAM_TOKEN = "1827426924:AAHja4wVzre72M04RRQG5vkOBBG48gIN6PE"
 
-def startCommand(update, context):
+
+def telegram_sendMessage(bot_message):
+   bot_token = TELEGRAM_TOKEN
+   bot_chatID = '1282342719'
+   send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
+
+   response = requests.get(send_text)
+   return response.json()
+
+def startCommand(update, context):    
     context.bot.send_message(chat_id=update.effective_chat.id, text='Hello there!')
 
 def priceAlert(update, context):
@@ -48,9 +58,9 @@ if __name__ == '__main__':
     updater = Updater(token=TELEGRAM_TOKEN, defaults=Defaults(parse_mode=ParseMode.HTML))
     dispatcher = updater.dispatcher
 
-    dispatcher.add_handler('start', startCommand) # Accessed via /start
-    dispatcher.add_handler('alert', priceAlert) # Accessed via /alert
+    dispatcher.add_handler(CommandHandler("start", startCommand))
+    dispatcher.add_handler(CommandHandler("alert", priceAlert)) # Accessed via /alert
 
     updater.start_polling() # Start the bot
-
+        
     updater.idle() # Wait for the script to be stopped, this will stop the bot as well

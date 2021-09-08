@@ -32,12 +32,13 @@ def registerStock():
     print("finished register stock")
 
 def main():
-    print("test")    
+    # print("test")    
     # unregisterSymbols()
     # registerCoins()
     # registerStock()     
     # deleteTrend()   
-    # print(trendUpdater())    
+    print(trendUpdater1())    
+    print(trendUpdater2())    
 
 if __name__ == "__main__":    
     main()

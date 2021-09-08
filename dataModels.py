@@ -9,6 +9,7 @@ dbSymbol = dbClient[db]["symbol"]
 dbAccount = dbClient[db]["account"]
 dbPortofolio = dbClient[db]["portofolio"]
 dbTrend = dbClient[db]["trend"]
+dbHistory = dbClient[db]["history"]
 
 def Symbols(symbolID, symbolType, allowUpdate, tickerID):
     data = {
