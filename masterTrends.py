@@ -54,10 +54,11 @@ def searchTrend(symbol=None):
         if symbol is not None :
             query = {"id": symbol}
             result = dbTrend.find(query)        
-        listTrend = []
-        for item in result:
-            listTrend.append(item)    
-        return listTrend        
+        # listTrend = []
+        # for item in result:
+        #     listTrend.append(item)    
+        # return listTrend        
+        return result
     except Exception as e:
         print("An Error occured :: ", e)
         return False

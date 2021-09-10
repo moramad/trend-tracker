@@ -2,8 +2,9 @@ import json, pymongo
 from pydantic import BaseModel, Field
 from bson import ObjectId
 from typing import Optional
+from credentials import *
 
-dbClient = pymongo.MongoClient("mongodb+srv://mo_user:resistor1watt@moramad-cluster.p88xu.mongodb.net/?retryWrites=true&w=majority")
+dbClient = mongodb()
 db = "trendTracker"
 dbSymbol = dbClient[db]["symbol"]
 dbAccount = dbClient[db]["account"]
