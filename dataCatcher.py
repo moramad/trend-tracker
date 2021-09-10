@@ -40,7 +40,9 @@ def trendUpdater1():
         tickerID = symbol["tickerID"]        
         if symbolType == "crypto":                        
             try:
-                coin = getCoinData(tickerID)                                   
+                coin = getCoinData(tickerID)
+                updateTime = datetime.today()
+                coin.update({"updateTime": updateTime})
                 result = updateTrend(coin)                
             except:
                 return False
@@ -73,7 +75,7 @@ def main():
     # print(getStockPrice('ASII.JK'))    
     # print("dataCatcher.py")
     # print(getCoinData("ethereum"))
-    print(trendUpdater())
+    print(trendUpdater1())
 
 if __name__ == "__main__":    
     main()

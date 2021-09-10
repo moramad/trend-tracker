@@ -3,9 +3,9 @@ from masterAccounts import *
 from dataCatcher import *
 import csv
   
-# os.environ['http_proxy'] = 'http://10.9.20.27:3128/'
-# os.environ['https_proxy'] = 'http://10.9.20.27:3128/'
-# os.environ['no_proxy']='localhost,127.0.0.1,*.astra-honda.com,10.*'
+os.environ['http_proxy'] = 'http://10.9.20.27:3128/'
+os.environ['https_proxy'] = 'http://10.9.20.27:3128/'
+os.environ['no_proxy']='localhost,127.0.0.1,*.astra-honda.com,10.*'
 
 def registerCoins():
     print("register new Coin")

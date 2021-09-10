@@ -47,13 +47,27 @@ def updateParsialTrend(coin):
         print("An Error occured :: ", e)
         return False
 
+def searchTrend(symbol=None):
+    try:        
+        if symbol is None :
+            result = dbTrend.find()
+        if symbol is not None :
+            query = {"id": symbol}
+            result = dbTrend.find(query)        
+        listTrend = []
+        for item in result:
+            listTrend.append(item)    
+        return listTrend        
+    except Exception as e:
+        print("An Error occured :: ", e)
+        return False
 
 def deleteTrend(symbol=None):
     try:
         if symbol is None:
             dbTrend.delete_many({})
         elif symbol is not None:
-            query = {"symbolID": symbol}
+            query = {"id": symbol}
             dbTrend.delete_many(query)
         return True
     except:

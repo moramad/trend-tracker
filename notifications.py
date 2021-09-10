@@ -1,6 +1,7 @@
 from telegram import ParseMode
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler, Defaults
 import requests
+from dataCatcher import *
 
 TELEGRAM_TOKEN = "1827426924:AAHja4wVzre72M04RRQG5vkOBBG48gIN6PE"
 
@@ -14,7 +15,10 @@ def telegram_sendMessage(bot_message):
    return response.json()
 
 def startCommand(update, context):    
-    context.bot.send_message(chat_id=update.effective_chat.id, text='Hello there!')
+    price=getCoinPrice("bitcoin")    
+    response=f"Harga Bitcoin saat ini : {price}$"
+    print(response)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
 def priceAlert(update, context):
     if len(context.args) > 2:
@@ -62,5 +66,6 @@ if __name__ == '__main__':
     dispatcher.add_handler(CommandHandler("alert", priceAlert)) # Accessed via /alert
 
     updater.start_polling() # Start the bot
+    print("notification polling running")
         
     updater.idle() # Wait for the script to be stopped, this will stop the bot as well
