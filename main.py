@@ -34,11 +34,11 @@ def registerStock():
 def main():
     # print("test")    
     # unregisterSymbols()
-    registerCoins()
+    # registerCoins()
     # registerStock()     
     # deleteTrend()   
-    # print(trendUpdater1())    
-    # print(trendUpdater2())    
+    print(trendUpdater1())    
+    print(trendUpdater2())    
 
 if __name__ == "__main__":    
     main()

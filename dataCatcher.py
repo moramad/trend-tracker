@@ -32,6 +32,7 @@ def getStockPrice(emitten):
         return False
     return data
 
+# update to trend table
 def trendUpdater1():    
     listSymbol = searchSymbols()
     for symbol in listSymbol:        
@@ -48,7 +49,8 @@ def trendUpdater1():
                 return False
     return True
 
-def trendUpdater2():    
+# update to history table
+def trendUpdater2():        
     listSymbol = searchSymbols()
     for symbol in listSymbol:        
         # symbolID = symbol["symbolID"]
