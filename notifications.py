@@ -1,7 +1,8 @@
-from telegram import ParseMode
-from telegram.ext import Updater, InlineQueryHandler, CommandHandler, Defaults
+from telegram import ParseMode, Update, ForceReply
+from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHandler, Defaults, Filters, CallbackContext
 import requests
 from dataCatcher import *
+from coreAnalyzer import *
 
 TELEGRAM_TOKEN = "1827426924:AAHja4wVzre72M04RRQG5vkOBBG48gIN6PE"
 
@@ -14,11 +15,21 @@ def telegram_sendMessage(bot_message):
    response = requests.get(send_text)
    return response.json()
 
-def startCommand(update, context):    
-    price=getCoinPrice("bitcoin")    
-    response=f"Harga Bitcoin saat ini : {price}$"
-    print(response)
-    context.bot.send_message(chat_id=update.effective_chat.id, text=response)
+def pingCommand(update, context):        
+    context.bot.send_message(chat_id=update.effective_chat.id, text='PONG!')
+
+def coinSummarizeCommand(update, context):
+    coin = context.args[0]
+    result = coinSummarize(coin)
+    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
+
+def marketSummarizeCommand(update, context):    
+    result = marketSummarize()
+    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
+
+def echo(update: Update, context: CallbackContext) -> None:
+    """Echo the user message."""    
+    update.message.reply_text(update.message.text)
 
 def priceAlert(update, context):
     if len(context.args) > 2:
@@ -62,8 +73,12 @@ if __name__ == '__main__':
     updater = Updater(token=TELEGRAM_TOKEN, defaults=Defaults(parse_mode=ParseMode.HTML))
     dispatcher = updater.dispatcher
 
-    dispatcher.add_handler(CommandHandler("start", startCommand))
-    dispatcher.add_handler(CommandHandler("alert", priceAlert)) # Accessed via /alert
+    dispatcher.add_handler(CommandHandler("ping", pingCommand))
+    dispatcher.add_handler(CommandHandler("coinSummarize", coinSummarizeCommand))
+    dispatcher.add_handler(CommandHandler("marketSummarize", marketSummarizeCommand))      
+    # dispatcher.add_handler(CommandHandler("alert", priceAlert)) # Accessed via /alert
+
+    # dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
 
     updater.start_polling() # Start the bot
     print("notification polling running")

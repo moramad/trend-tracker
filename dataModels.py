@@ -3,6 +3,7 @@ from pydantic import BaseModel, Field
 from bson import ObjectId
 from typing import Optional
 from credentials import *
+import dateutil.parser
 
 dbClient = mongodb()
 db = "trendTracker"
@@ -291,6 +292,11 @@ class Account(BaseModel):
                 "password": "<example>"
             }
         }
+
+def convertDate(dateString):
+    dateParsing = dateutil.parser.parse(dateString)
+    result = dateParsing.strftime('%d-%m-%Y')
+    return result
 
 def main():
     print("main function")
