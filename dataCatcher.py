@@ -10,7 +10,8 @@ def getCoinData(id):
     try:
         result = cg.get_coin_by_id(id)
         return result
-    except:
+    except Exception as e:
+        print("An Error occured :: ", e)
         return False
 
 def getCoinPrice(coin, currencies="usd"):
@@ -36,16 +37,17 @@ def getStockPrice(emitten):
 def trendUpdater1():    
     listSymbol = searchSymbols()
     for symbol in listSymbol:        
-        # symbolID = symbol["symbolID"]
+        symbolID = symbol["symbolID"]
         symbolType = symbol["symbolType"]
         tickerID = symbol["tickerID"]        
         if symbolType == "crypto":                        
             try:
                 updateTime = datetime.today()
+                print(f"{symbolID} | {tickerID}")
                 coin = getCoinData(tickerID)                                   
                 coin.update({"updateTime": updateTime})
                 result = updateTrend(coin)                
-            except:
+            except:                              
                 return False
     return True
 
@@ -72,12 +74,13 @@ def trendUpdater2():
 
 
 def main():
-    # print("dataCatcher")
+    print("dataCatcher")
     # print(getCoinPrice('polygon'))
     # print(getStockPrice('ASII.JK'))    
     # print("dataCatcher.py")
     # print(getCoinData("ethereum"))
     print(trendUpdater1())
+    # print(getCoinData("binancecoin"))
 
 if __name__ == "__main__":    
     main()

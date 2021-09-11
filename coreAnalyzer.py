@@ -43,8 +43,7 @@ def marketSummarize():
     content = []
     result = ""
     for symbol in listSymbol:                        
-        id = symbol["id"]
-        print(id)
+        id = symbol["id"]        
         code = symbol["symbol"]
         current_price = symbol["market_data"]["current_price"]["usd"]
         price_change_percentage_24h = symbol["market_data"]["price_change_percentage_24h"]
