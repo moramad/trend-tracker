@@ -77,7 +77,8 @@ def deleteTrend(symbol=None):
 def main():
     print("MasterCoins")
     # deleteTrend()
-    # configIndex()
+    # configIndex()    
+    # print(searchTrend())
     
 
 if __name__ == "__main__":

@@ -7,6 +7,7 @@ def coinSummarize(id):
         symbol = getCoinData(id)
         id = symbol["id"]
         code = symbol["symbol"]
+        name = symbol["name"]
         current_price = symbol["market_data"]["current_price"]["usd"]
         price_change_percentage_24h = symbol["market_data"]["price_change_percentage_24h"]
         price_change_percentage_7d = symbol["market_data"]["price_change_percentage_7d"]
@@ -20,7 +21,7 @@ def coinSummarize(id):
         atl_change_percentage = symbol["market_data"]["atl_change_percentage"]["usd"]
 
         content = []
-        format = f"COIN SUMMARY : {id} \n"
+        format = f"COIN SUMMARY : {name} | {code.upper()} \n"
         format = format + f"price = ${current_price} \n"
         format = format + f"change % 24h = {round(price_change_percentage_24h,2)}% \n"
         format = format + f"change % 7d = {round(price_change_percentage_7d,2)}% \n"
@@ -35,15 +36,27 @@ def coinSummarize(id):
         return False
 
 def marketSummarize():
-    threshold_change_percentage_24h = 3
-    threshold_change_percentage_7d = 10
-    threshold_change_percentage_30d = 30
+    threshold_change_percentage_24h = 10
+    threshold_change_percentage_7d = 20
+    threshold_change_percentage_30d = 50
     threshold_ath_change_percentage = 10
-    listSymbol = searchTrend()
+    listSymbol = searchTrend()    
     content = []
-    result = ""
-    for symbol in listSymbol:                        
+    
+    for symbol in listSymbol:
+        notif = ""
+        flnotif = False
+        flath = False
+        flatl = False
+        flPriceChangeUp24h = False
+        flPriceChangeUp7d = False
+        flPriceChangeUp30d = False
+        flPriceChangeDown24h = False
+        flPriceChangeDown7d = False
+        flPriceChangeDown30d = False
+
         id = symbol["id"]        
+        name = symbol["name"]
         code = symbol["symbol"]
         current_price = symbol["market_data"]["current_price"]["usd"]
         price_change_percentage_24h = symbol["market_data"]["price_change_percentage_24h"]
@@ -52,36 +65,60 @@ def marketSummarize():
         total_volume = symbol["market_data"]["total_volume"]["usd"]
         ath = symbol["market_data"]["ath"]["usd"]
         atl = symbol["market_data"]["atl"]["usd"]
+        ath_date = convertDate(symbol["market_data"]["ath_date"]["usd"])     
+        atl_date = convertDate(symbol["market_data"]["atl_date"]["usd"])
         ath_change_percentage = symbol["market_data"]["ath_change_percentage"]["usd"]    
-        atl_change_percentage = symbol["market_data"]["atl_change_percentage"]["usd"]        
+        atl_change_percentage = symbol["market_data"]["atl_change_percentage"]["usd"]                
         
         if ath_change_percentage >= -threshold_ath_change_percentage :
-            result = f"harga {id} saat ini ${current_price}, akan mencapai ATH pada ${ath}"
-            content.append(result)
+            flnotif = True
+            flath = True
         if atl_change_percentage <= threshold_ath_change_percentage :
-            result = f"harga {id} saat ini ${current_price}, akan mencapai ATH pada ${ath}"
-            content.append(result)
+            flnotif = True
+            flatl = True
         if price_change_percentage_24h > threshold_change_percentage_24h :
-             result = f"harga {id} saat ini ${current_price}, naik {round(price_change_percentage_24h, 2)}% dalam 24 jam"             
-             content.append(result)
+            flnotif = True
+            flPriceChangeUp24h = True
         if price_change_percentage_24h < -threshold_change_percentage_24h :
-             result = f"harga {id} saat ini ${current_price}, turun {round(price_change_percentage_24h, 2)}% dalam 24 jam"             
-             content.append(result)
+            flnotif = True
+            flPriceChangeDown24h = True
         if price_change_percentage_7d > threshold_change_percentage_7d :
-             result = f"harga {id} saat ini ${current_price}, naik {round(price_change_percentage_7d, 2)}% dalam 7 hari"
-             content.append(result)
+            flnotif = True
+            flPriceChangeUp7d = True
         if price_change_percentage_7d < -threshold_change_percentage_7d :
-             result = f"harga {id} saat ini ${current_price}, turun {round(price_change_percentage_7d, 2)}% dalam 7 hari"
-             content.append(result)
+            flnotif = True
+            flPriceChangeDown7d = True
         if price_change_percentage_30d > threshold_change_percentage_30d :
-             result = f"harga {id} saat ini ${current_price}, naik {round(price_change_percentage_30d, 2)}% dalam 30 hari"
-             content.append(result)
+            flnotif = True
+            flPriceChangeUp30d = True
         if price_change_percentage_30d < -threshold_change_percentage_30d :
-             result = f"harga {id} saat ini ${current_price}, turun {round(price_change_percentage_30d, 2)}% dalam 30 hari"                    
-             content.append(result)
-    if content :
+            flnotif = True
+            flPriceChangeDown30d = True
+        
+        if flnotif:
+            notif = f"- {name} | {code.upper()} "
+        if flath:
+            notif = notif + f"ATH @ ${ath}, "
+        if flatl:
+            notif = notif + f"ATL @ ${ath}, "
+        if flPriceChangeUp24h:
+            notif = notif + f"naik {round(price_change_percentage_24h,2)}% 24jam, "
+        if flPriceChangeDown24h:
+            notif = notif + f"turun {round(price_change_percentage_24h,2)}% 24jam, "
+        if flPriceChangeUp7d and (price_change_percentage_24h != price_change_percentage_7d):
+            notif = notif + f"naik {round(price_change_percentage_7d,2)}% 7hari, "
+        if flPriceChangeDown7d and (price_change_percentage_24h != price_change_percentage_7d):
+            notif = notif + f"turun {round(price_change_percentage_7d,2)}% 7hari, "
+        if flPriceChangeUp30d and (price_change_percentage_24h != price_change_percentage_30d):
+            notif = notif + f"naik {round(price_change_percentage_30d,2)}% 30hari, "
+        if flPriceChangeDown30d and (price_change_percentage_24h != price_change_percentage_30d):
+            notif = notif + f"turun {round(price_change_percentage_30d,2)}% 30hari, "
+        if flnotif:                    
+            content.append(notif)
+            
+    if content:
         result = "\n".join(content)
-        print(result)
+        # print(result)
         return result
 
 def main():

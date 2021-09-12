@@ -16,14 +16,17 @@ def telegram_sendMessage(bot_message):
    return response.json()
 
 def pingCommand(update, context):        
-    context.bot.send_message(chat_id=update.effective_chat.id, text='PONG!')
+    context.bot.send_message(chat_id=update.effective_chat.id, text='⚠️PONG')
 
 def coinSummarizeCommand(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="⏳ coin summarizing..")
+    print(f"request from {update.effective_chat.username}")
     coin = context.args[0]
-    result = coinSummarize(coin)
+    result = coinSummarize(coin)    
     context.bot.send_message(chat_id=update.effective_chat.id, text=result)
 
 def marketSummarizeCommand(update, context):    
+    context.bot.send_message(chat_id=update.effective_chat.id, text="⏳ coin summarizing..")
     result = marketSummarize()
     context.bot.send_message(chat_id=update.effective_chat.id, text=result)
 
