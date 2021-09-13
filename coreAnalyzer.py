@@ -38,10 +38,10 @@ def coinSummarize(id):
         return False
 
 def marketSummarize():
-    threshold_change_percentage_1h = 0
-    threshold_change_percentage_24h = 10
+    threshold_change_percentage_1h = 3
+    threshold_change_percentage_24h = 15
     threshold_change_percentage_7d = 30
-    threshold_change_percentage_30d = 100
+    threshold_change_percentage_30d = 200
     threshold_ath_change_percentage = 10
     listSymbol = searchTrend()    
     content = []
@@ -139,7 +139,7 @@ def marketSummarize():
 
 def main():
     print("coreAnalyzer")
-    marketSummarize()
+    print(marketSummarize())
     # coinSummarize("ethereum")
 
 if __name__ == "__main__":    
