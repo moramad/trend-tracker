@@ -9,6 +9,7 @@ def coinSummarize(id):
         code = symbol["symbol"]
         name = symbol["name"]
         current_price = symbol["market_data"]["current_price"]["usd"]
+        price_change_percentage_1h = symbol["market_data"]["price_change_percentage_1h_in_currency"]["usd"]
         price_change_percentage_24h = symbol["market_data"]["price_change_percentage_24h"]
         price_change_percentage_7d = symbol["market_data"]["price_change_percentage_7d"]
         price_change_percentage_30d = symbol["market_data"]["price_change_percentage_30d"]
@@ -23,6 +24,7 @@ def coinSummarize(id):
         content = []
         format = f"COIN SUMMARY : {name} | {code.upper()} \n"
         format = format + f"price = ${current_price} \n"
+        format = format + f"change % 1h = {round(price_change_percentage_1h,2)}% \n"
         format = format + f"change % 24h = {round(price_change_percentage_24h,2)}% \n"
         format = format + f"change % 7d = {round(price_change_percentage_7d,2)}% \n"
         format = format + f"change % 30d = {round(price_change_percentage_30d,2)}% \n"            
@@ -36,9 +38,10 @@ def coinSummarize(id):
         return False
 
 def marketSummarize():
+    threshold_change_percentage_1h = 0
     threshold_change_percentage_24h = 10
-    threshold_change_percentage_7d = 20
-    threshold_change_percentage_30d = 50
+    threshold_change_percentage_7d = 30
+    threshold_change_percentage_30d = 100
     threshold_ath_change_percentage = 10
     listSymbol = searchTrend()    
     content = []
@@ -48,17 +51,20 @@ def marketSummarize():
         flnotif = False
         flath = False
         flatl = False
+        flPriceChangeUp1h = False
         flPriceChangeUp24h = False
         flPriceChangeUp7d = False
         flPriceChangeUp30d = False
+        flPriceChangeDown1h = False
         flPriceChangeDown24h = False
         flPriceChangeDown7d = False
         flPriceChangeDown30d = False
 
-        id = symbol["id"]        
+        id = symbol["id"]         
         name = symbol["name"]
         code = symbol["symbol"]
         current_price = symbol["market_data"]["current_price"]["usd"]
+        price_change_percentage_1h = symbol["market_data"]["price_change_percentage_1h_in_currency"]["usd"]
         price_change_percentage_24h = symbol["market_data"]["price_change_percentage_24h"]
         price_change_percentage_7d = symbol["market_data"]["price_change_percentage_7d"]
         price_change_percentage_30d = symbol["market_data"]["price_change_percentage_30d"]
@@ -76,6 +82,12 @@ def marketSummarize():
         if atl_change_percentage <= threshold_ath_change_percentage :
             flnotif = True
             flatl = True
+        if price_change_percentage_1h > threshold_change_percentage_1h :
+            flnotif = True
+            flPriceChangeUp1h = True
+        if price_change_percentage_1h < -threshold_change_percentage_1h :
+            flnotif = True
+            flPriceChangeDown1h = True
         if price_change_percentage_24h > threshold_change_percentage_24h :
             flnotif = True
             flPriceChangeUp24h = True
@@ -101,6 +113,10 @@ def marketSummarize():
             notif = notif + f"ATH @ ${ath}, "
         if flatl:
             notif = notif + f"ATL @ ${ath}, "
+        if flPriceChangeUp1h:
+            notif = notif + f"naik {round(price_change_percentage_1h,2)}% 1jam, "
+        if flPriceChangeDown1h:
+            notif = notif + f"turun {round(price_change_percentage_1h,2)}% 1jam, "
         if flPriceChangeUp24h:
             notif = notif + f"naik {round(price_change_percentage_24h,2)}% 24jam, "
         if flPriceChangeDown24h:
