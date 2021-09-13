@@ -5,8 +5,22 @@ from dataCatcher import *
 from coreAnalyzer import *
 from credentials import *
 
+import os
+
+TELEGRAM_TOKEN = telegramToken()
+
+def checkPID():
+    process = "notification"         
+    nlist = 0
+    for line in os.popen("ps ax | grep " + process + " | grep -v grep"):
+        nlist += 1                    
+    if nlist > 1:
+        print("Application was started")
+        exit()    
+
+
 def telegram_sendMessage(bot_message):
-   bot_token = telegramToken()
+   bot_token = TELEGRAM_TOKEN
    bot_chatID = telegramChatID()
    send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
 
@@ -17,20 +31,16 @@ def pingCommand(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text='⚠️PONG')
 
 def coinSummarizeCommand(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="⏳ coin summarizing..")
+    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
     print(f"request from {update.effective_chat.username}")
     coin = context.args[0]
     result = coinSummarize(coin)    
     context.bot.send_message(chat_id=update.effective_chat.id, text=result)
 
-def marketSummarizeCommand(update, context):    
-    context.bot.send_message(chat_id=update.effective_chat.id, text="⏳ coin summarizing..")
+def marketSummarizeCommand(update, context):        
+    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
     result = marketSummarize()
     context.bot.send_message(chat_id=update.effective_chat.id, text=result)
-
-def echo(update: Update, context: CallbackContext) -> None:
-    """Echo the user message."""    
-    update.message.reply_text(update.message.text)
 
 def priceAlert(update, context):
     if len(context.args) > 2:
@@ -71,17 +81,16 @@ def priceAlertCallback(context):
         context.bot.send_message(chat_id=chat_id, text=response)
 
 if __name__ == '__main__':
+    checkPID()
+
     updater = Updater(token=TELEGRAM_TOKEN, defaults=Defaults(parse_mode=ParseMode.HTML))
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("ping", pingCommand))
-    dispatcher.add_handler(CommandHandler("coinSummarize", coinSummarizeCommand))
-    dispatcher.add_handler(CommandHandler("marketSummarize", marketSummarizeCommand))      
-    # dispatcher.add_handler(CommandHandler("alert", priceAlert)) # Accessed via /alert
-
-    # dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, echo))
+    dispatcher.add_handler(CommandHandler("coin", coinSummarizeCommand))
+    dispatcher.add_handler(CommandHandler("market", marketSummarizeCommand))      
 
     updater.start_polling() # Start the bot
     print("notification polling running")
         
-    updater.idle() # Wait for the script to be stopped, this will stop the bot as well
+    updater.idle() # Wait for the script to be stopped, this will stop the bot as well    
