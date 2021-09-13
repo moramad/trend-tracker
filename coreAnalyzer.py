@@ -133,8 +133,7 @@ def marketSummarize():
             content.append(notif)
             
     if content:
-        result = "\n".join(content)
-        # print(result)
+        result = "\n".join(content)        
         return result
 
 def main():
