@@ -3,13 +3,11 @@ from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHan
 import requests
 from dataCatcher import *
 from coreAnalyzer import *
-
-TELEGRAM_TOKEN = "1827426924:AAHja4wVzre72M04RRQG5vkOBBG48gIN6PE"
-
+from credentials import *
 
 def telegram_sendMessage(bot_message):
-   bot_token = TELEGRAM_TOKEN
-   bot_chatID = '1282342719'
+   bot_token = telegramToken()
+   bot_chatID = telegramChatID()
    send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
 
    response = requests.get(send_text)
