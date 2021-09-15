@@ -34,11 +34,20 @@ def updateHistory(coin):
         print("An Error occured :: ", e)
         return False
 
+def updateTrendSupport(coin,supports):
+    try:
+        id = coin["id"]        
+        query = {"id": id}        
+        set = {"$set": {"supports": supports}}
+        result = dbTrend.update_many(query,set,upsert=True)
+        return result
+    except Exception as e:
+        print("An Error occured :: ", e)
+        return False
 
 def updateParsialTrend(coin):
     try:
-        id = coin["id"]
-        print(f"get data {id} success")  
+        id = coin["id"]        
         query = {"id": id}        
         set = {"$set": {"asset_platform_id": "test"}}
         result = dbTrend.update_many(query,set,upsert=True)
@@ -54,6 +63,22 @@ def searchTrend(symbol=None):
         if symbol is not None :
             query = {"id": symbol}
             result = dbTrend.find(query)        
+        # listTrend = []
+        # for item in result:
+        #     listTrend.append(item)    
+        # return listTrend        
+        return result
+    except Exception as e:
+        print("An Error occured :: ", e)
+        return False
+
+def searchHistory(symbol=None):
+    try:        
+        if symbol is None :
+            result = dbHistory.find()
+        if symbol is not None :
+            query = {"id": symbol}
+            result = dbHistory.find(query)        
         # listTrend = []
         # for item in result:
         #     listTrend.append(item)    

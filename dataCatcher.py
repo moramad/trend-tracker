@@ -3,6 +3,10 @@ from pycoingecko import CoinGeckoAPI
 import yfinance as yf
 from masterSymbols import *
 from masterTrends import *
+import yfinance
+import pandas as pd
+import numpy as np
+import json
 
 cg = CoinGeckoAPI()
 
@@ -33,6 +37,43 @@ def getStockPrice(emitten):
         return False
     return data
 
+def getSupportResistance(symbol):    
+    ticker = yfinance.Ticker(symbol+'-USD')
+    data = ticker.info
+    start_time = '2021-05-01'
+    end_time = datetime.now().strftime("%Y-%m-%d")
+    df = ticker.history(interval="1d",start=start_time, end=end_time)
+    df['Date'] = pd.to_datetime(df.index)    
+    df = df.loc[:,['Date', 'Open', 'High', 'Low', 'Close']]
+
+    def isSupport(df,i):
+        support = df['Low'][i] < df['Low'][i-1]  and df['Low'][i] < df['Low'][i+1] and df['Low'][i+1] < df['Low'][i+2] and df['Low'][i-1] < df['Low'][i-2]
+        return support
+    def isResistance(df,i):
+        resistance = df['High'][i] > df['High'][i-1]  and df['High'][i] > df['High'][i+1] and df['High'][i+1] > df['High'][i+2] and df['High'][i-1] > df['High'][i-2]
+        return resistance
+    def isFarFromLevel(l):
+        return np.sum([abs(l-x) < s  for x in levels]) == 0
+
+    s =  np.mean(df['High'] - df['Low'])/2 
+    levels = []
+    for i in range(2,df.shape[0]-2):
+        if isSupport(df,i):
+            l = df['Low'][i]            
+            if isFarFromLevel(l):
+                levels.append((i,l))
+        elif isResistance(df,i):
+            l = df['High'][i]            
+            if isFarFromLevel(l):
+                levels.append((i,l))    
+
+    supports = []
+    for level in levels :
+        support = rounding(level[1])
+        supports.append(support)
+    return supports
+
+
 # update to trend table
 def trendUpdater1():    
     listSymbol = searchSymbols()
@@ -46,7 +87,9 @@ def trendUpdater1():
                 print(f"{symbolID} | {tickerID}")
                 coin = getCoinData(tickerID)                                   
                 coin.update({"updateTime": updateTime})
-                result = updateTrend(coin)                
+                result = updateTrend(coin)         
+                supports = getSupportResistance(symbolID)                                       
+                updateTrendSupport(coin,supports)
             except:                              
                 return False
     return True

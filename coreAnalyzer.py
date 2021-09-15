@@ -4,7 +4,10 @@ from masterTrends import *
 
 def coinSummarize(id):
     try:
-        symbol = getCoinData(id)
+        # listSymbol = searchTrend(id)
+        # for symbol in listSymbol:  
+        # updateTime = symbol["updateTime"]   
+        symbol = getCoinData(id)               
         id = symbol["id"]
         code = symbol["symbol"]
         name = symbol["name"]
@@ -19,10 +22,10 @@ def coinSummarize(id):
         ath_date = convertDate(symbol["market_data"]["ath_date"]["usd"])     
         atl_date = convertDate(symbol["market_data"]["atl_date"]["usd"])
         ath_change_percentage = symbol["market_data"]["ath_change_percentage"]["usd"]    
-        atl_change_percentage = symbol["market_data"]["atl_change_percentage"]["usd"]
-
-        content = []
-        format = f"COIN SUMMARY : {name} | {code.upper()} \n"
+        atl_change_percentage = symbol["market_data"]["atl_change_percentage"]["usd"]        
+        updateTime = symbol["last_updated"]
+        
+        format = f"COIN SUMMARY : {name} | {code.upper()} @ {updateTime} \n"
         format = format + f"price = ${current_price} \n"
         format = format + f"change % 1h = {round(price_change_percentage_1h,2)}% \n"
         format = format + f"change % 24h = {round(price_change_percentage_24h,2)}% \n"
@@ -34,7 +37,8 @@ def coinSummarize(id):
         print(format)
         # telegram_sendMessage(format)
         return format
-    except:
+    except Exception as e:
+        print("An Error occured :: ", e)
         return False
 
 def marketSummarize():
@@ -75,6 +79,7 @@ def marketSummarize():
         atl_date = convertDate(symbol["market_data"]["atl_date"]["usd"])
         ath_change_percentage = symbol["market_data"]["ath_change_percentage"]["usd"]    
         atl_change_percentage = symbol["market_data"]["atl_change_percentage"]["usd"]                
+        updateTime = symbol["updateTime"]
         
         if ath_change_percentage >= -threshold_ath_change_percentage :
             flnotif = True
@@ -108,7 +113,7 @@ def marketSummarize():
             flPriceChangeDown30d = True
         
         if flnotif:
-            notif = f"- {name} | {code.upper()} "
+            notif = f"- {name} | {code.upper()} | @ {updateTime} "
         if flath:
             notif = notif + f"ATH @ ${ath}, "
         if flatl:
@@ -138,8 +143,10 @@ def marketSummarize():
 
 def main():
     print("coreAnalyzer")
-    print(marketSummarize())
+    # print(marketSummarize())
     # coinSummarize("ethereum")
+    # supports = getSupportResistance("DOGE")            
+
 
 if __name__ == "__main__":    
     main()
