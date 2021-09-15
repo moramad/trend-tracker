@@ -44,8 +44,8 @@ def coinSummarize(id):
 def marketSummarize():
     threshold_change_percentage_1h = 3
     threshold_change_percentage_24h = 15
-    threshold_change_percentage_7d = 30
-    threshold_change_percentage_30d = 200
+    threshold_change_percentage_7d = 100
+    threshold_change_percentage_30d = 300
     threshold_ath_change_percentage = 10
     listSymbol = searchTrend()    
     content = []
