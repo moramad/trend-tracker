@@ -34,11 +34,16 @@ def updateHistory(coin):
         print("An Error occured :: ", e)
         return False
 
-def updateTrendSupport(coin,supports):
+def updateTrendSupports(coin):
     try:
-        id = coin["id"]        
+        id = coin["id"]
+        updateTime = coin["updateTime"]
+        supports = coin["supports"]
+
         query = {"id": id}        
-        set = {"$set": {"supports": supports}}
+        set = {"$set": {"supports": supports,
+                        "updateTime": updateTime}}
+                        
         result = dbTrend.update_many(query,set,upsert=True)
         return result
     except Exception as e:

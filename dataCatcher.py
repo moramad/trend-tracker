@@ -9,6 +9,7 @@ import numpy as np
 import json
 
 cg = CoinGeckoAPI()
+currency = "usd"
 
 def getCoinData(id):
     try:
@@ -18,13 +19,12 @@ def getCoinData(id):
         print("An Error occured :: ", e)
         return False
 
-def getCoinPrice(coin, currencies="usd"):
+def getCoinPrice(id):
     try:
-        price = cg.get_price(ids=coin, vs_currencies= currencies)
-        result = price[coin][currencies]
+        coin = cg.get_coin_by_id(id, tickers=False, community_data=False, developer_data=False, sparkline=False)        
     except:        
         result = False
-    return result
+    return coin
 
 def getStockPrice(emitten):
     try:
@@ -37,43 +37,6 @@ def getStockPrice(emitten):
         return False
     return data
 
-def getSupportResistance(symbol):    
-    ticker = yfinance.Ticker(symbol+'-USD')
-    data = ticker.info
-    start_time = '2021-05-01'
-    end_time = datetime.now().strftime("%Y-%m-%d")
-    df = ticker.history(interval="1d",start=start_time, end=end_time)
-    df['Date'] = pd.to_datetime(df.index)    
-    df = df.loc[:,['Date', 'Open', 'High', 'Low', 'Close']]
-
-    def isSupport(df,i):
-        support = df['Low'][i] < df['Low'][i-1]  and df['Low'][i] < df['Low'][i+1] and df['Low'][i+1] < df['Low'][i+2] and df['Low'][i-1] < df['Low'][i-2]
-        return support
-    def isResistance(df,i):
-        resistance = df['High'][i] > df['High'][i-1]  and df['High'][i] > df['High'][i+1] and df['High'][i+1] > df['High'][i+2] and df['High'][i-1] > df['High'][i-2]
-        return resistance
-    def isFarFromLevel(l):
-        return np.sum([abs(l-x) < s  for x in levels]) == 0
-
-    s =  np.mean(df['High'] - df['Low'])/2 
-    levels = []
-    for i in range(2,df.shape[0]-2):
-        if isSupport(df,i):
-            l = df['Low'][i]            
-            if isFarFromLevel(l):
-                levels.append((i,l))
-        elif isResistance(df,i):
-            l = df['High'][i]            
-            if isFarFromLevel(l):
-                levels.append((i,l))    
-
-    supports = []
-    for level in levels :
-        support = rounding(level[1])
-        supports.append(support)
-    return supports
-
-
 # update to trend table
 def trendUpdater1():    
     listSymbol = searchSymbols()
@@ -82,14 +45,28 @@ def trendUpdater1():
         symbolType = symbol["symbolType"]
         tickerID = symbol["tickerID"]        
         if symbolType == "crypto":                        
-            try:
-                updateTime = datetime.today()
+            try:                
                 print(f"{symbolID} | {tickerID}")
                 coin = getCoinData(tickerID)                                   
+                updateTime = datetime.today()
                 coin.update({"updateTime": updateTime})
                 result = updateTrend(coin)         
-                supports = getSupportResistance(symbolID)                                       
-                updateTrendSupport(coin,supports)
+
+                updateTime = datetime.today().replace(minute=0,second=0,microsecond=0)
+                current_price = coin["market_data"]["current_price"][currency]
+                high = coin["market_data"]["high_24h"][currency]
+                low = coin["market_data"]["low_24h"][currency]
+                market_cap = coin["market_data"]["market_cap"][currency]
+                coin = {}
+                coin.update({"id": tickerID})
+                coin.update({"symbolID": symbolID})                
+                coin.update({"current_price": current_price})
+                coin.update({"high": high})
+                coin.update({"low": low})
+                coin.update({"market_cap": market_cap})
+                coin.update({"updateTime": updateTime})
+                
+                result = updateHistory(coin) 
             except:                              
                 return False
     return True
@@ -103,7 +80,8 @@ def trendUpdater2():
         tickerID = symbol["tickerID"]        
         if symbolType == "crypto":                        
             try:
-                price = getCoinPrice(tickerID)   
+                coin = getCoinData(tickerID,tickers=False)
+
                 updateTime = datetime.today().replace(minute=0,second=0,microsecond=0)
 
                 coin = {}
@@ -123,6 +101,7 @@ def main():
     # print("dataCatcher.py")
     # print(getCoinData("ethereum"))
     print(trendUpdater1())
+    # print(getCoinPrice("ethereum"))
     # print(getCoinData("binancecoin"))
 
 if __name__ == "__main__":    

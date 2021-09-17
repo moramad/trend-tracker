@@ -18,7 +18,6 @@ def checkPID():
         print("Application was started")
         exit()    
 
-
 def telegram_sendMessage(bot_message):
    bot_token = TELEGRAM_TOKEN
    bot_chatID = telegramChatID()
@@ -87,8 +86,19 @@ if __name__ == '__main__':
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("ping", pingCommand))
-    dispatcher.add_handler(CommandHandler("coin", coinSummarizeCommand))
-    dispatcher.add_handler(CommandHandler("market", marketSummarizeCommand))      
+    dispatcher.add_handler(CommandHandler("help", helpCommand))
+    dispatcher.add_handler(CommandHandler("p", priceCommand))
+    dispatcher.add_handler(CommandHandler("c", chartCommand))
+    dispatcher.add_handler(CommandHandler("ath", athCommand))
+    dispatcher.add_handler(CommandHandler("atl", atlCommand))
+    dispatcher.add_handler(CommandHandler("index", indexCommand))
+    dispatcher.add_handler(CommandHandler("best", bestCommand))
+    dispatcher.add_handler(CommandHandler("worst", worstCommand))
+    dispatcher.add_handler(CommandHandler("suggest", suggestCommand))
+    dispatcher.add_handler(CommandHandler("alert", alertCommand))
+
+    # dispatcher.add_handler(CommandHandler("coin", coinSummarizeCommand))
+    # dispatcher.add_handler(CommandHandler("market", marketSummarizeCommand))      
 
     updater.start_polling() # Start the bot
     print("notification polling running")
