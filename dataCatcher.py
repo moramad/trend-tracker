@@ -38,7 +38,7 @@ def getStockPrice(emitten):
     return data
 
 # update to trend table
-def trendUpdater1():    
+def trendUpdater():    
     listSymbol = searchSymbols()
     for symbol in listSymbol:        
         symbolID = symbol["symbolID"]
@@ -71,28 +71,6 @@ def trendUpdater1():
                 return False
     return True
 
-# update to history table
-def trendUpdater2():        
-    listSymbol = searchSymbols()
-    for symbol in listSymbol:        
-        # symbolID = symbol["symbolID"]
-        symbolType = symbol["symbolType"]
-        tickerID = symbol["tickerID"]        
-        if symbolType == "crypto":                        
-            try:
-                coin = getCoinData(tickerID,tickers=False)
-
-                updateTime = datetime.today().replace(minute=0,second=0,microsecond=0)
-
-                coin = {}
-                coin.update({"id": tickerID})
-                coin.update({"price": price})
-                coin.update({"updateTime": updateTime})               
-                result = updateHistory(coin)                
-            except:
-                return False
-    return True
-
 
 def main():
     print("dataCatcher")
@@ -100,7 +78,7 @@ def main():
     # print(getStockPrice('ASII.JK'))    
     # print("dataCatcher.py")
     # print(getCoinData("ethereum"))
-    print(trendUpdater1())
+    print(trendUpdater())
     # print(getCoinPrice("ethereum"))
     # print(getCoinData("binancecoin"))
 
