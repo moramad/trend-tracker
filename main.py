@@ -1,6 +1,7 @@
 from masterSymbols import *
 from masterAccounts import *
 from dataCatcher import *
+from coreAnalyzer import *
 import csv
   
 # os.environ['http_proxy'] = 'http://10.9.20.27:3128/'
@@ -37,7 +38,8 @@ def main():
     # registerCoins()
     # registerStock()     
     # deleteTrend()   
-    print(trendUpdater())        
+    print(trendUpdater())   
+    print(coreAnalytic())     
 
 if __name__ == "__main__":    
     main()
