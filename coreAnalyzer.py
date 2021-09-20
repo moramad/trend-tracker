@@ -2,7 +2,17 @@ from notifications import *
 from dataModels import *
 from masterTrends import *
 
-def coinSummarize(id):
+import matplotlib.dates as mpl_dates
+import matplotlib.pyplot as plt
+from mplfinance.original_flavor import candlestick_ohlc
+import pandas as pd
+import numpy as np
+from datetime import datetime
+
+currency = "usd"
+days = 30
+
+def priceSummarize(id):
     try:
         # listSymbol = searchTrend(id)
         # for symbol in listSymbol:  
@@ -141,13 +151,19 @@ def marketSummarize():
         result = "\n".join(content)        
         return result
 
-def getSupportResistance(symbol):    
-    ticker = yfinance.Ticker(symbol+'-USD')
-    data = ticker.info
-    start_time = '2021-05-01'
-    end_time = datetime.now().strftime("%Y-%m-%d")
-    df = ticker.history(interval="1d",start=start_time, end=end_time)
-    df['Date'] = pd.to_datetime(df.index)    
+def getSupportResistanceArray(id):    
+    # ticker = yfinance.Ticker(symbol+'-'+currency.upper())
+    # data = ticker.info
+    # start_time = '2021-05-01'
+    # end_time = datetime.now().strftime("%Y-%m-%d")
+    # df = ticker.history(interval="1d",start=start_time, end=end_time)
+
+    result = cg.get_coin_ohlc_by_id(id=id,vs_currency=currency,days=days)
+    df = pd.DataFrame(result)
+    df.columns = ["Date","Open","High","Low","Close"]
+    df['Date'] = pd.to_datetime(df['Date'],unit='ms')
+    df['Date'] = df['Date'].apply(mpl_dates.date2num)
+
     df = df.loc[:,['Date', 'Open', 'High', 'Low', 'Close']]
 
     def isSupport(df,i):
@@ -159,7 +175,7 @@ def getSupportResistance(symbol):
     def isFarFromLevel(l):
         return np.sum([abs(l-x) < s  for x in levels]) == 0
 
-    s =  np.mean(df['High'] - df['Low'])/2 
+    s =  np.mean(df['High'] - df['Low']) * 2
     levels = []
     for i in range(2,df.shape[0]-2):
         if isSupport(df,i):
@@ -176,33 +192,71 @@ def getSupportResistance(symbol):
         support = rounding(level[1])
         supports.append(support)
     return supports
+    
+def takeClosest(num,listSupports):
+    listSupports.sort()
+    support = 0
+    resistance = listSupports[-1]
+    result = []
+    for item in listSupports:
+        if item <= num:
+            support = max(item, support)
+        if item > num:
+            resistance = min(item, resistance)
+    result.append(support)
+    if support != resistance and num < resistance:
+        result.append(resistance)
+    return result    
 
 def coreAnalytic():
     listSymbol = searchSymbols()
     for symbol in listSymbol:        
-        symbolType = symbol["symbolType"]
-        symbolID = symbol["symbolID"]
+        symbolType = symbol["symbolType"]  
+        symbolID = symbol["symbolID"]      
         tickerID = symbol["tickerID"]        
         if symbolType == "crypto":                        
             try:                                
                 updateTime = datetime.today()
-                supports = getSupportResistance(symbolID)
-                print(f"{symbolID} | {tickerID}")
+                supports = getSupportResistanceArray(tickerID)
+                coinData = searchTrend(tickerID)    
+                current_price = coinData[0]["market_data"]["current_price"][currency]    
+                supres = takeClosest(current_price, supports)                                
+                print(f"{symbolID} | {tickerID} | {supports} | {current_price}")
+                if supres and len(supports)>1 and len(supres)>1:                                                                 
+                    try:
+                        support = supres[0]
+                        resistance = supres[1]
+                        percent2resistance = ((current_price - support) / (resistance - support)) * 100
+                        percent2resistance = round(percent2resistance,2)
+                    except Exception as e:                        
+                        print(f"An Error occured : {e}")
+                        percent2resistance = "NA"                                            
+                else:
+                    support = 0
+                    resistance = 0
+                    percent2resistance = "NA"
+
                 coin = {}                
                 coin.update({"id": tickerID})                
                 coin.update({"updateTime": updateTime})
                 coin.update({"supports": supports})
-                updateTrendSupports(coin)
-            except:                              
+                coin.update({"support": support})
+                coin.update({"resistance": resistance})
+                coin.update({"percent2resistance": percent2resistance})    
+                updateTrendSupportResistance(coin)                
+            except Exception as e:
+                print("An Error occured in coreAnalytic :: ", e)
                 return False
     return True    
 
 def main():
     print("coreAnalyzer")
     # print(marketSummarize())
-    # coinSummarize("ethereum")
-    # supports = getSupportResistance("DOGE")     
-    coreAnalytic()       
+    # priceSummarize("ethereum")
+    # supports = getSupportResistanceArray("DOGE")     
+    # getSupportResistance("btc")
+    # getSupportResistance("ada")
+    print(coreAnalytic())
 
 
 if __name__ == "__main__":    

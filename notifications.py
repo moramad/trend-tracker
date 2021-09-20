@@ -1,11 +1,10 @@
 from telegram import ParseMode, Update, ForceReply
-from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHandler, Defaults, Filters, CallbackContext
-import requests
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHandler, Defaults, Filters, CallbackContext, CallbackQueryHandler
+import requests, os
 from dataCatcher import *
 from coreAnalyzer import *
 from credentials import *
-
-import os
 
 TELEGRAM_TOKEN = telegramToken()
 
@@ -26,20 +25,7 @@ def telegram_sendMessage(bot_message):
    response = requests.get(send_text)
    return response.json()
 
-def pingCommand(update, context):        
-    context.bot.send_message(chat_id=update.effective_chat.id, text='⚠️PONG')
-
-def coinSummarizeCommand(update, context):
-    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
-    print(f"request from {update.effective_chat.username}")
-    coin = context.args[0]
-    result = coinSummarize(coin)    
-    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
-
-def marketSummarizeCommand(update, context):        
-    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
-    result = marketSummarize()
-    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
+##########################################
 
 def priceAlert(update, context):
     if len(context.args) > 2:
@@ -79,6 +65,128 @@ def priceAlertCallback(context):
 
         context.bot.send_message(chat_id=chat_id, text=response)
 
+##########################################
+def pingCommand(update, context):        
+    context.bot.send_message(chat_id=update.effective_chat.id, text='⚠️PONG')
+
+def helpCommand(update, context):
+    response = f"<b>Menu Commands:</b> \n"
+    response += f"/ping - Check service bot \n"
+    response += f"/p &#60;coin&#62; - Coin's Price \n"    
+    response += f"/c &#60;coin&#62; - Coin's Chart \n"
+    response += f"/ath &#60;coin&#62; - Coin's all time high value & date \n"
+    response += f"/atl &#60;coin&#62; - Coin's all time low value & date \n"
+    response += f"/m - Market Summarize \n"
+    response += f"/index - Top 10 by marketcap \n"
+    response += f"/best - Top 10 by best performance\n"
+    response += f"/worst - Top 10 by worst performance\n"
+    response += f"/suggest - near 0% support \n"
+    context.bot.send_message(chat_id=update.effective_chat.id, text=response)
+
+##########################################
+def priceCommand(update, context):
+    print(f"request from {update.effective_chat.username}")
+    try:            
+        context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
+        coin = context.args[0]        
+        response = priceSummarize(coin)    
+        context.bot.send_message(chat_id=update.effective_chat.id, text=response)
+    except:
+        response = f"<b>Command Format:</b> \n"
+        response += f"/p bitcoin\n"
+        response += f"/p ethereum\n"
+        context.bot.send_message(chat_id=update.effective_chat.id, text=response)
+
+def chartCommand(update, context):
+    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
+    print(f"request from {update.effective_chat.username}")
+    coin = context.args[0]
+    result = priceSummarize(coin)    
+    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
+
+def athCommand(update, context):
+    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
+    print(f"request from {update.effective_chat.username}")
+    coin = context.args[0]
+    result = priceSummarize(coin)    
+    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
+
+def atlCommand(update, context):
+    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
+    print(f"request from {update.effective_chat.username}")
+    coin = context.args[0]
+    result = priceSummarize(coin)    
+    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
+
+def marketCommand(update, context):    
+    print(f"request from {update.effective_chat.username}")
+    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
+    result = marketSummarize()    
+    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
+
+def indexCommand(update, context):
+    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
+    print(f"request from {update.effective_chat.username}")
+    coin = context.args[0]
+    result = priceSummarize(coin)    
+    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
+
+def bestCommand(update, context):
+    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
+    print(f"request from {update.effective_chat.username}")
+    coin = context.args[0]
+    result = priceSummarize(coin)    
+    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
+
+def worstCommand(update, context):
+    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
+    print(f"request from {update.effective_chat.username}")
+    coin = context.args[0]
+    result = priceSummarize(coin)    
+    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
+
+def suggestCommand(update, context):
+    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
+    print(f"request from {update.effective_chat.username}")
+    coin = context.args[0]
+    result = priceSummarize(coin)    
+    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
+
+##########################################
+def start(update: Update, context: CallbackContext) -> None:
+    """Sends a message with three inline buttons attached."""
+    keyboard = [
+        [
+            InlineKeyboardButton("Option 1", callback_data='1'),
+            InlineKeyboardButton("Option 2", callback_data='2'),
+        ],
+        [InlineKeyboardButton("Option 3", callback_data='3')],
+    ]
+
+    reply_markup = InlineKeyboardMarkup(keyboard)
+
+    update.message.reply_text('Please choose:', reply_markup=reply_markup)
+
+def button1(update: Update, context: CallbackContext) -> None:
+    """Parses the CallbackQuery and updates the message text."""
+    query = update.callback_query
+
+    # CallbackQueries need to be answered, even if no notification to the user is needed
+    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
+    query.answer()
+
+    query.edit_message_text(text=f"Selected option1: {query.data}")
+
+def button2(update: Update, context: CallbackContext) -> None:
+    """Parses the CallbackQuery and updates the message text."""
+    query = update.callback_query
+
+    # CallbackQueries need to be answered, even if no notification to the user is needed
+    # Some clients may have trouble otherwise. See https://core.telegram.org/bots/api#callbackquery
+    query.answer()
+
+    query.edit_message_text(text=f"Selected option2: {query.data}")
+
 if __name__ == '__main__':
     checkPID()
 
@@ -87,17 +195,24 @@ if __name__ == '__main__':
 
     dispatcher.add_handler(CommandHandler("ping", pingCommand))
     dispatcher.add_handler(CommandHandler("help", helpCommand))
+    
     dispatcher.add_handler(CommandHandler("p", priceCommand))
     dispatcher.add_handler(CommandHandler("c", chartCommand))
     dispatcher.add_handler(CommandHandler("ath", athCommand))
     dispatcher.add_handler(CommandHandler("atl", atlCommand))
+    dispatcher.add_handler(CommandHandler("m", marketCommand))
     dispatcher.add_handler(CommandHandler("index", indexCommand))
     dispatcher.add_handler(CommandHandler("best", bestCommand))
     dispatcher.add_handler(CommandHandler("worst", worstCommand))
     dispatcher.add_handler(CommandHandler("suggest", suggestCommand))
-    dispatcher.add_handler(CommandHandler("alert", alertCommand))
 
-    # dispatcher.add_handler(CommandHandler("coin", coinSummarizeCommand))
+    # dispatcher.add_handler(CommandHandler('start', start))
+    # dispatcher.add_handler(CallbackQueryHandler(button1, pattern='1'))
+    # dispatcher.add_handler(CallbackQueryHandler(button2, pattern='2'))
+
+    # dispatcher.add_handler(CommandHandler("alert", alertCommand))
+
+    # dispatcher.add_handler(CommandHandler("coin", priceSummarizeCommand))
     # dispatcher.add_handler(CommandHandler("market", marketSummarizeCommand))      
 
     updater.start_polling() # Start the bot
