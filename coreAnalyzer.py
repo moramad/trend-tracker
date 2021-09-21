@@ -14,26 +14,25 @@ days = 30
 
 def priceSummarize(id):
     try:
-        # listSymbol = searchTrend(id)
-        # for symbol in listSymbol:  
-        # updateTime = symbol["updateTime"]   
-        symbol = getCoinData(id)               
+        symbol = searchTrend(id)[0]        
+        # symbol = getCoinData(id)               
         id = symbol["id"]
         code = symbol["symbol"]
         name = symbol["name"]
-        current_price = symbol["market_data"]["current_price"]["usd"]
-        price_change_percentage_1h = symbol["market_data"]["price_change_percentage_1h_in_currency"]["usd"]
+        current_price = symbol["market_data"]["current_price"][currency]
+        price_change_percentage_1h = symbol["market_data"]["price_change_percentage_1h_in_currency"][currency]
         price_change_percentage_24h = symbol["market_data"]["price_change_percentage_24h"]
         price_change_percentage_7d = symbol["market_data"]["price_change_percentage_7d"]
         price_change_percentage_30d = symbol["market_data"]["price_change_percentage_30d"]
-        total_volume = symbol["market_data"]["total_volume"]["usd"]
-        ath = symbol["market_data"]["ath"]["usd"]
-        atl = symbol["market_data"]["atl"]["usd"]    
-        ath_date = convertDate(symbol["market_data"]["ath_date"]["usd"])     
-        atl_date = convertDate(symbol["market_data"]["atl_date"]["usd"])
-        ath_change_percentage = symbol["market_data"]["ath_change_percentage"]["usd"]    
-        atl_change_percentage = symbol["market_data"]["atl_change_percentage"]["usd"]        
-        updateTime = symbol["last_updated"]
+        total_volume = symbol["market_data"]["total_volume"][currency]
+        ath = symbol["market_data"]["ath"][currency]
+        atl = symbol["market_data"]["atl"][currency]    
+        ath_date = convertDate(symbol["market_data"]["ath_date"][currency])     
+        atl_date = convertDate(symbol["market_data"]["atl_date"][currency])
+        ath_change_percentage = symbol["market_data"]["ath_change_percentage"][currency]    
+        atl_change_percentage = symbol["market_data"]["atl_change_percentage"][currency]        
+        updateTime = symbol["updateTime"]
+        percent2resistance = symbol["percent2resistance"]
         
         format = f"COIN SUMMARY : {name} | {code.upper()} @ {updateTime} \n"
         format = format + f"price = ${current_price} \n"
@@ -43,7 +42,8 @@ def priceSummarize(id):
         format = format + f"change % 30d = {round(price_change_percentage_30d,2)}% \n"            
         format = format + f"volume = {total_volume} \n"
         format = format + f"ath = ${ath} pada {ath_date}, selisih {round(ath_change_percentage,2)}%  \n"    
-        format = format + f"atl = ${atl} pada {atl_date}, selisih {round(atl_change_percentage,2)}%"    
+        format = format + f"atl = ${atl} pada {atl_date}, selisih {round(atl_change_percentage,2)}% \n"
+        format = format + f"%2Res = ${percent2resistance}%"
         print(format)
         # telegram_sendMessage(format)
         return format
@@ -77,18 +77,18 @@ def marketSummarize():
         id = symbol["id"]         
         name = symbol["name"]
         code = symbol["symbol"]
-        current_price = symbol["market_data"]["current_price"]["usd"]
-        price_change_percentage_1h = symbol["market_data"]["price_change_percentage_1h_in_currency"]["usd"]
+        current_price = symbol["market_data"]["current_price"][currency]
+        price_change_percentage_1h = symbol["market_data"]["price_change_percentage_1h_in_currency"][currency]
         price_change_percentage_24h = symbol["market_data"]["price_change_percentage_24h"]
         price_change_percentage_7d = symbol["market_data"]["price_change_percentage_7d"]
         price_change_percentage_30d = symbol["market_data"]["price_change_percentage_30d"]
-        total_volume = symbol["market_data"]["total_volume"]["usd"]
-        ath = symbol["market_data"]["ath"]["usd"]
-        atl = symbol["market_data"]["atl"]["usd"]
-        ath_date = convertDate(symbol["market_data"]["ath_date"]["usd"])     
-        atl_date = convertDate(symbol["market_data"]["atl_date"]["usd"])
-        ath_change_percentage = symbol["market_data"]["ath_change_percentage"]["usd"]    
-        atl_change_percentage = symbol["market_data"]["atl_change_percentage"]["usd"]                
+        total_volume = symbol["market_data"]["total_volume"][currency]
+        ath = symbol["market_data"]["ath"][currency]
+        atl = symbol["market_data"]["atl"][currency]
+        ath_date = convertDate(symbol["market_data"]["ath_date"][currency])     
+        atl_date = convertDate(symbol["market_data"]["atl_date"][currency])
+        ath_change_percentage = symbol["market_data"]["ath_change_percentage"][currency]    
+        atl_change_percentage = symbol["market_data"]["atl_change_percentage"][currency]                
         updateTime = symbol["updateTime"]
         
         if ath_change_percentage >= -threshold_ath_change_percentage :
@@ -252,11 +252,11 @@ def coreAnalytic():
 def main():
     print("coreAnalyzer")
     # print(marketSummarize())
-    # priceSummarize("ethereum")
+    priceSummarize("bitcoin")
     # supports = getSupportResistanceArray("DOGE")     
     # getSupportResistance("btc")
     # getSupportResistance("ada")
-    print(coreAnalytic())
+    # print(coreAnalytic())
 
 
 if __name__ == "__main__":    
