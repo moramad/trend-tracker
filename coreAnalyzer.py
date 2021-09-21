@@ -34,16 +34,16 @@ def priceSummarize(id):
         updateTime = symbol["updateTime"]
         percent2resistance = symbol["percent2resistance"]
         
-        format = f"COIN SUMMARY : {name} | {code.upper()} @ {updateTime} \n"
+        format = f"<b>COIN SUMMARY</b> : {name} | {code.upper()} @ {updateTime} \n"
         format = format + f"price = ${current_price} \n"
-        format = format + f"change % 1h = {round(price_change_percentage_1h,2)}% \n"
-        format = format + f"change % 24h = {round(price_change_percentage_24h,2)}% \n"
-        format = format + f"change % 7d = {round(price_change_percentage_7d,2)}% \n"
-        format = format + f"change % 30d = {round(price_change_percentage_30d,2)}% \n"            
+        format = format + f"% 1h = {round(price_change_percentage_1h,2)}% \n"
+        format = format + f"% 24h = {round(price_change_percentage_24h,2)}% \n"
+        format = format + f" % 7d = {round(price_change_percentage_7d,2)}% \n"
+        format = format + f" % 30d = {round(price_change_percentage_30d,2)}% \n"            
         format = format + f"volume = {total_volume} \n"
-        format = format + f"ath = ${ath} pada {ath_date}, selisih {round(ath_change_percentage,2)}%  \n"    
-        format = format + f"atl = ${atl} pada {atl_date}, selisih {round(atl_change_percentage,2)}% \n"
-        format = format + f"%2Res = ${percent2resistance}%"
+        format = format + f"% ath = ${ath} @ {ath_date}, {round(ath_change_percentage,2)}% \n"    
+        format = format + f"% atl = ${atl} @ {atl_date}, {round(atl_change_percentage,2)}% \n"
+        format = format + f"% 2Res = ${percent2resistance}%"
         print(format)
         # telegram_sendMessage(format)
         return format
@@ -57,6 +57,7 @@ def marketSummarize():
     threshold_change_percentage_7d = 100
     threshold_change_percentage_30d = 300
     threshold_ath_change_percentage = 10
+    threshold_percent2resistance = 10
     listSymbol = searchTrend()    
     content = []
     
@@ -73,6 +74,7 @@ def marketSummarize():
         flPriceChangeDown24h = False
         flPriceChangeDown7d = False
         flPriceChangeDown30d = False
+        fl2Resistance = False
 
         id = symbol["id"]         
         name = symbol["name"]
@@ -88,7 +90,8 @@ def marketSummarize():
         ath_date = convertDate(symbol["market_data"]["ath_date"][currency])     
         atl_date = convertDate(symbol["market_data"]["atl_date"][currency])
         ath_change_percentage = symbol["market_data"]["ath_change_percentage"][currency]    
-        atl_change_percentage = symbol["market_data"]["atl_change_percentage"][currency]                
+        atl_change_percentage = symbol["market_data"]["atl_change_percentage"][currency]       
+        percent2resistance = symbol["percent2resistance"]
         updateTime = symbol["updateTime"]
         
         if ath_change_percentage >= -threshold_ath_change_percentage :
@@ -121,7 +124,11 @@ def marketSummarize():
         if price_change_percentage_30d < -threshold_change_percentage_30d :
             flnotif = True
             flPriceChangeDown30d = True
-        
+        if type(percent2resistance) != str:
+            if percent2resistance < threshold_percent2resistance:
+                flnotif = True
+                fl2Resistance = True
+
         if flnotif:
             notif = f"- {name} | {code.upper()} | @ {updateTime} "
         if flath:
@@ -144,6 +151,8 @@ def marketSummarize():
             notif = notif + f"naik {round(price_change_percentage_30d,2)}% 30hari, "
         if flPriceChangeDown30d and (price_change_percentage_24h != price_change_percentage_30d):
             notif = notif + f"turun {round(price_change_percentage_30d,2)}% 30hari, "
+        if fl2Resistance:
+            notif = notif + f"{round(price_change_percentage_30d,2)}% dari resistance"
         if flnotif:                    
             content.append(notif)
             
@@ -151,20 +160,12 @@ def marketSummarize():
         result = "\n".join(content)        
         return result
 
-def getSupportResistanceArray(id):    
+def getSupportResistanceArray(df):    
     # ticker = yfinance.Ticker(symbol+'-'+currency.upper())
     # data = ticker.info
     # start_time = '2021-05-01'
     # end_time = datetime.now().strftime("%Y-%m-%d")
-    # df = ticker.history(interval="1d",start=start_time, end=end_time)
-
-    result = cg.get_coin_ohlc_by_id(id=id,vs_currency=currency,days=days)
-    df = pd.DataFrame(result)
-    df.columns = ["Date","Open","High","Low","Close"]
-    df['Date'] = pd.to_datetime(df['Date'],unit='ms')
-    df['Date'] = df['Date'].apply(mpl_dates.date2num)
-
-    df = df.loc[:,['Date', 'Open', 'High', 'Low', 'Close']]
+    # df = ticker.history(interval="1d",start=start_time, end=end_time)    
 
     def isSupport(df,i):
         support = df['Low'][i] < df['Low'][i-1]  and df['Low'][i] < df['Low'][i+1] and df['Low'][i+1] < df['Low'][i+2] and df['Low'][i-1] < df['Low'][i-2]
@@ -186,11 +187,9 @@ def getSupportResistanceArray(id):
             l = df['High'][i]            
             if isFarFromLevel(l):
                 levels.append((i,l))    
-
-    supports = []
-    for level in levels :
-        support = rounding(level[1])
-        supports.append(support)
+    return levels
+    
+    
     return supports
     
 def takeClosest(num,listSupports):
@@ -208,6 +207,48 @@ def takeClosest(num,listSupports):
         result.append(resistance)
     return result    
 
+def chartGenerator(df, tickerID, levels=None):   
+    try:                          
+        plt.rcParams['figure.figsize'] = [16, 9]
+        plt.rc('font', size=16)
+        fig, ax = plt.subplots()
+        candlestick_ohlc(ax,df.values,width=0.1, colorup='green', colordown='red', alpha=0.8)   
+        
+        if levels is not None:
+            for level in levels:
+                plt.hlines(level[1],xmin=df['Date'][level[0]],xmax=max(df['Date']),colors='blue')             
+        
+        # ax.set_xlabel('Date')
+        # ax.set_ylabel('Price')
+        # ax.set_facecolor('xkcd:black')
+        date_format = mpl_dates.DateFormatter('%d %b %Y')
+        ax.xaxis.set_major_formatter(date_format)        
+        ax.grid(True)        
+        ax.set_title(f'Chart Trend Coin {tickerID}', y=1.0, pad=10)
+        # fig.autofmt_xdate()
+        # fig.patch.set_facecolor('xkcd:grey')  
+        fig.tight_layout()                       
+              
+        fig.show()                                
+        # plt.suptitle(f'created by moramad.tech',fontsize=12)
+        plt.savefig(f'chart/chart_{tickerID}.png')
+        plt.close('all')
+        print(f"Chart {tickerID} generated!")
+    except Exception as e:
+        print("An Error occured in chartGenerator :: ", e)
+        return False             
+
+def generateChart(id):
+    result = cg.get_coin_ohlc_by_id(id=id,vs_currency=currency,days=days)
+    df = pd.DataFrame(result)
+    df.columns = ["Date","Open","High","Low","Close"]
+    df['Date'] = pd.to_datetime(df['Date'],unit='ms')
+    df['Date'] = df['Date'].apply(mpl_dates.date2num)
+    df = df.loc[:,['Date', 'Open', 'High', 'Low', 'Close']] 
+
+    levels = getSupportResistanceArray(df)
+    chartGenerator(df,id, levels)
+
 def coreAnalytic():
     listSymbol = searchSymbols()
     for symbol in listSymbol:        
@@ -215,13 +256,27 @@ def coreAnalytic():
         symbolID = symbol["symbolID"]      
         tickerID = symbol["tickerID"]        
         if symbolType == "crypto":                        
-            try:                                
+            try:   
+                result = cg.get_coin_ohlc_by_id(id=tickerID,vs_currency=currency,days=days)
+                df = pd.DataFrame(result)
+                df.columns = ["Date","Open","High","Low","Close"]
+                df['Date'] = pd.to_datetime(df['Date'],unit='ms')
+                df['Date'] = df['Date'].apply(mpl_dates.date2num)
+                df = df.loc[:,['Date', 'Open', 'High', 'Low', 'Close']]                             
+
                 updateTime = datetime.today()
-                supports = getSupportResistanceArray(tickerID)
+
+                levels = getSupportResistanceArray(df)
+                supports = []
+                for level in levels :
+                    support = rounding(level[1])
+                    supports.append(support)
+
                 coinData = searchTrend(tickerID)    
                 current_price = coinData[0]["market_data"]["current_price"][currency]    
                 supres = takeClosest(current_price, supports)                                
                 print(f"{symbolID} | {tickerID} | {supports} | {current_price}")
+
                 if supres and len(supports)>1 and len(supres)>1:                                                                 
                     try:
                         support = supres[0]
@@ -235,7 +290,7 @@ def coreAnalytic():
                     support = 0
                     resistance = 0
                     percent2resistance = "NA"
-
+                
                 coin = {}                
                 coin.update({"id": tickerID})                
                 coin.update({"updateTime": updateTime})
@@ -243,7 +298,8 @@ def coreAnalytic():
                 coin.update({"support": support})
                 coin.update({"resistance": resistance})
                 coin.update({"percent2resistance": percent2resistance})    
-                updateTrendSupportResistance(coin)                
+                updateTrendSupportResistance(coin)                                
+                chartGenerator(df, tickerID, levels)
             except Exception as e:
                 print("An Error occured in coreAnalytic :: ", e)
                 return False
@@ -252,12 +308,12 @@ def coreAnalytic():
 def main():
     print("coreAnalyzer")
     # print(marketSummarize())
-    priceSummarize("bitcoin")
+    # priceSummarize("bitcoin")
     # supports = getSupportResistanceArray("DOGE")     
     # getSupportResistance("btc")
-    # getSupportResistance("ada")
-    # print(coreAnalytic())
-
+    # getSupportResistance("ada")    
+    coreAnalytic()
+    # generateChart("bitcoin")
 
 if __name__ == "__main__":    
     main()

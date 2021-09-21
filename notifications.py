@@ -71,6 +71,7 @@ def pingCommand(update, context):
 
 def helpCommand(update, context):
     response = f"<b>Menu Commands:</b> \n"
+    response += f"/h, /help - This help menu \n"
     response += f"/ping - Check service bot \n"
     response += f"/p &#60;coin&#62; - Coin's Price \n"    
     response += f"/c &#60;coin&#62; - Coin's Chart \n"
@@ -98,11 +99,10 @@ def priceCommand(update, context):
         context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
 def chartCommand(update, context):
-    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
-    print(f"request from {update.effective_chat.username}")
+    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")    
     coin = context.args[0]
-    result = priceSummarize(coin)    
-    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
+    print(f"request from {update.effective_chat.username} | request {coin}")    
+    context.bot.send_photo(chat_id=update.effective_chat.id, photo=open(f'chart/chart_{coin}.png', 'rb'))  
 
 def athCommand(update, context):
     context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
@@ -194,7 +194,9 @@ if __name__ == '__main__':
     dispatcher = updater.dispatcher
 
     dispatcher.add_handler(CommandHandler("ping", pingCommand))
+    dispatcher.add_handler(CommandHandler("h", helpCommand))
     dispatcher.add_handler(CommandHandler("help", helpCommand))
+    
     
     dispatcher.add_handler(CommandHandler("p", priceCommand))
     dispatcher.add_handler(CommandHandler("c", chartCommand))
