@@ -99,10 +99,14 @@ def priceCommand(update, context):
         context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
 def chartCommand(update, context):
-    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")    
-    coin = context.args[0]
-    print(f"request from {update.effective_chat.username} | request {coin}")    
-    context.bot.send_photo(chat_id=update.effective_chat.id, photo=open(f'chart/chart_{coin}.png', 'rb'))  
+    try:
+        context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")    
+        coin = context.args[0]
+        print(f"request from {update.effective_chat.username} | request {coin}")    
+        context.bot.send_photo(chat_id=update.effective_chat.id, photo=open(f'chart/chart_{coin}.png', 'rb'))  
+    except:
+        response = f"<b>File chart not found!</b> \n"
+        context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
 def athCommand(update, context):
     context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
