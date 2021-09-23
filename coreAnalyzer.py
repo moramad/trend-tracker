@@ -51,13 +51,32 @@ def priceSummarize(id):
         print("An Error occured :: ", e)
         return False
 
+def indexSummarize():
+    index = searchTopIndex()
+    
+    format = f"<b>INDEX SUMMARY</b> : \n"
+    for symbol in index:
+        id = symbol["id"]
+        code = symbol["symbol"]
+        name = symbol["name"]
+        current_price = symbol["market_data"]["current_price"][currency]
+        price_change_percentage_24h = round(symbol["market_data"]["price_change_percentage_24h"],2)
+        updateTime = symbol["updateTime"]
+        percent2resistance = symbol["percent2resistance"]
+        market_cap_rank = symbol["market_cap_rank"]      
+        market_cap = symbol["market_data"]["market_cap"][currency]
+        
+        format = format + f"{market_cap_rank}. {id.upper()} ({code}) 💎MC: ${market_cap:,} 💰USD: ${current_price:,} {price_change_percentage_24h}% 📈{percent2resistance}% 2Res  \n"                
+    format = format + f"Update @ {updateTime}"
+    return format
+
 def marketSummarize():
     threshold_change_percentage_1h = 3
     threshold_change_percentage_24h = 15
-    threshold_change_percentage_7d = 100
+    threshold_change_percentage_7d = 150
     threshold_change_percentage_30d = 300
     threshold_ath_change_percentage = 10
-    threshold_percent2resistance = 10
+    threshold_percent2resistance = 20
     listSymbol = searchTrend()    
     content = []
     
@@ -118,41 +137,41 @@ def marketSummarize():
         if price_change_percentage_7d < -threshold_change_percentage_7d :
             flnotif = True
             flPriceChangeDown7d = True
-        if price_change_percentage_30d > threshold_change_percentage_30d :
+        if price_change_percentage_30d > 10 :
             flnotif = True
             flPriceChangeUp30d = True
         if price_change_percentage_30d < -threshold_change_percentage_30d :
             flnotif = True
             flPriceChangeDown30d = True
         if type(percent2resistance) != str:
-            if percent2resistance < threshold_percent2resistance:
+            if percent2resistance < threshold_percent2resistance and percent2resistance > -threshold_percent2resistance:
                 flnotif = True
                 fl2Resistance = True
 
         if flnotif:
-            notif = f"- {name} | {code.upper()} | @ {updateTime} "
+            notif = f"- {id.upper()} | {code.upper()} "
         if flath:
-            notif = notif + f"ATH @ ${ath}, "
+            notif = notif + f"${current_price}, ATH ${ath}, "
         if flatl:
-            notif = notif + f"ATL @ ${ath}, "
+            notif = notif + f"${current_price}, ATL ${ath}, "
         if flPriceChangeUp1h:
-            notif = notif + f"naik {round(price_change_percentage_1h,2)}% 1jam, "
+            notif = notif + f"📈 {round(price_change_percentage_1h,2)}% 1H, "
         if flPriceChangeDown1h:
-            notif = notif + f"turun {round(price_change_percentage_1h,2)}% 1jam, "
+            notif = notif + f"📉 {round(price_change_percentage_1h,2)}% 1H, "
         if flPriceChangeUp24h:
-            notif = notif + f"naik {round(price_change_percentage_24h,2)}% 24jam, "
+            notif = notif + f"📈 {round(price_change_percentage_24h,2)}% 24H, "
         if flPriceChangeDown24h:
-            notif = notif + f"turun {round(price_change_percentage_24h,2)}% 24jam, "
+            notif = notif + f"📉 {round(price_change_percentage_24h,2)}% 24H, "
         if flPriceChangeUp7d and (price_change_percentage_24h != price_change_percentage_7d):
-            notif = notif + f"naik {round(price_change_percentage_7d,2)}% 7hari, "
+            notif = notif + f"📈 {round(price_change_percentage_7d,2)}% 7D, "
         if flPriceChangeDown7d and (price_change_percentage_24h != price_change_percentage_7d):
-            notif = notif + f"turun {round(price_change_percentage_7d,2)}% 7hari, "
+            notif = notif + f"📉 {round(price_change_percentage_7d,2)}% 7D, "
         if flPriceChangeUp30d and (price_change_percentage_24h != price_change_percentage_30d):
-            notif = notif + f"naik {round(price_change_percentage_30d,2)}% 30hari, "
+            notif = notif + f"📈 {round(price_change_percentage_30d,2)}% 30D, "
         if flPriceChangeDown30d and (price_change_percentage_24h != price_change_percentage_30d):
-            notif = notif + f"turun {round(price_change_percentage_30d,2)}% 30hari, "
+            notif = notif + f"📉 {round(price_change_percentage_30d,2)}% 30D, "
         if fl2Resistance:
-            notif = notif + f"{round(price_change_percentage_30d,2)}% dari resistance"
+            notif = notif + f"🧨{round(percent2resistance,2)}%"
         if flnotif:                    
             content.append(notif)
             
@@ -307,12 +326,13 @@ def coreAnalytic():
 
 def main():
     print("coreAnalyzer")
-    # print(marketSummarize())
+    print(marketSummarize())
+    # print(indexSummarize())
     # priceSummarize("bitcoin")
     # supports = getSupportResistanceArray("DOGE")     
     # getSupportResistance("btc")
     # getSupportResistance("ada")    
-    coreAnalytic()
+    # coreAnalytic()
     # generateChart("bitcoin")
 
 if __name__ == "__main__":    

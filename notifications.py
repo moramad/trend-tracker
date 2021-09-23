@@ -74,9 +74,7 @@ def helpCommand(update, context):
     response += f"/h, /help - This help menu \n"
     response += f"/ping - Check service bot \n"
     response += f"/p &#60;coin&#62; - Coin's Price \n"    
-    response += f"/c &#60;coin&#62; - Coin's Chart \n"
-    response += f"/ath &#60;coin&#62; - Coin's all time high value & date \n"
-    response += f"/atl &#60;coin&#62; - Coin's all time low value & date \n"
+    response += f"/c &#60;coin&#62; - Coin's Chart \n"    
     response += f"/m - Market Summarize \n"
     response += f"/index - Top 10 by marketcap \n"
     response += f"/best - Top 10 by best performance\n"
@@ -108,20 +106,6 @@ def chartCommand(update, context):
         response = f"<b>File chart not found!</b> \n"
         context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
-def athCommand(update, context):
-    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
-    print(f"request from {update.effective_chat.username}")
-    coin = context.args[0]
-    result = priceSummarize(coin)    
-    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
-
-def atlCommand(update, context):
-    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
-    print(f"request from {update.effective_chat.username}")
-    coin = context.args[0]
-    result = priceSummarize(coin)    
-    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
-
 def marketCommand(update, context):    
     print(f"request from {update.effective_chat.username}")
     context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
@@ -130,9 +114,8 @@ def marketCommand(update, context):
 
 def indexCommand(update, context):
     context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
-    print(f"request from {update.effective_chat.username}")
-    coin = context.args[0]
-    result = priceSummarize(coin)    
+    print(f"request from {update.effective_chat.username}")    
+    result = indexSummarize()    
     context.bot.send_message(chat_id=update.effective_chat.id, text=result)
 
 def bestCommand(update, context):
@@ -204,8 +187,6 @@ if __name__ == '__main__':
     
     dispatcher.add_handler(CommandHandler("p", priceCommand))
     dispatcher.add_handler(CommandHandler("c", chartCommand))
-    dispatcher.add_handler(CommandHandler("ath", athCommand))
-    dispatcher.add_handler(CommandHandler("atl", atlCommand))
     dispatcher.add_handler(CommandHandler("m", marketCommand))
     dispatcher.add_handler(CommandHandler("index", indexCommand))
     dispatcher.add_handler(CommandHandler("best", bestCommand))

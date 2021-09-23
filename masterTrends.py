@@ -83,6 +83,16 @@ def searchTrend(symbol=None):
         print("An Error occured :: ", e)
         return False
 
+def searchTopIndex():
+    try:
+        query = {"market_cap_rank":{"$lte": 10}}
+        result = dbTrend.find(query).sort("market_cap_rank")
+        return result
+
+    except Exception as e:
+        print("An Error occured :: ", e)
+        return False
+
 def searchHistory(symbol=None):
     try:        
         if symbol is None :
@@ -111,7 +121,8 @@ def deleteTrend(symbol=None):
         return False
 
 def main():
-    print("MasterCoins")
+    print("MasterTrends")
+    searchTopIndex()
     # deleteTrend()
     # configIndex()    
     # print(searchTrend())
