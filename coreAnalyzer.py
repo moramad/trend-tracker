@@ -137,7 +137,7 @@ def marketSummarize():
         if price_change_percentage_7d < -threshold_change_percentage_7d :
             flnotif = True
             flPriceChangeDown7d = True
-        if price_change_percentage_30d > 10 :
+        if price_change_percentage_30d > threshold_change_percentage_30d :
             flnotif = True
             flPriceChangeUp30d = True
         if price_change_percentage_30d < -threshold_change_percentage_30d :
