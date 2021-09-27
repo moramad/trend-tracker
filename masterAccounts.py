@@ -83,8 +83,7 @@ def searchAccounts(query=None):
 
 def main():    
     # configIndex()
-    # unregisterAccounts()
-    account = Accounts("mochamad","rama","mochamad@ramadhan.com","pass1234","admin",True)
+    # unregisterAccounts()    
     print(registerAccounts(account))
     
     # print("masterAccounts")
