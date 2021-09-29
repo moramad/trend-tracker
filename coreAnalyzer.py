@@ -35,12 +35,12 @@ def priceSummarize(id):
         percent2resistance = symbol["percent2resistance"]
         
         format = f"<b>COIN SUMMARY</b> : {name} | {code.upper()} @ {updateTime} \n"
-        format = format + f"price = ${current_price} \n"
+        format = format + f"price = ${current_price:,} \n"
         format = format + f"% 1h = {round(price_change_percentage_1h,2)}% \n"
         format = format + f"% 24h = {round(price_change_percentage_24h,2)}% \n"
         format = format + f" % 7d = {round(price_change_percentage_7d,2)}% \n"
         format = format + f" % 30d = {round(price_change_percentage_30d,2)}% \n"            
-        format = format + f"volume = {total_volume} \n"
+        format = format + f"volume = {total_volume:,} \n"
         format = format + f"% ath = ${ath} @ {ath_date}, {round(ath_change_percentage,2)}% \n"    
         format = format + f"% atl = ${atl} @ {atl_date}, {round(atl_change_percentage,2)}% \n"
         format = format + f"% 2Res = ${percent2resistance}%"
@@ -75,8 +75,8 @@ def marketSummarize():
     threshold_change_percentage_24h = 15
     threshold_change_percentage_7d = 150
     threshold_change_percentage_30d = 300
-    threshold_ath_change_percentage = 10
-    threshold_percent2resistance = 20
+    threshold_ath_change_percentage = 5
+    threshold_percent2resistance = 5
     listSymbol = searchTrend()    
     content = []
     
@@ -151,9 +151,9 @@ def marketSummarize():
         if flnotif:
             notif = f"- {id.upper()} | {code.upper()} "
         if flath:
-            notif = notif + f"${current_price}, ATH ${ath}, "
+            notif = notif + f"${current_price:,}, ATH ${ath}, "
         if flatl:
-            notif = notif + f"${current_price}, ATL ${ath}, "
+            notif = notif + f"${current_price:,}, ATL ${ath}, "
         if flPriceChangeUp1h:
             notif = notif + f"📈 {round(price_change_percentage_1h,2)}% 1H, "
         if flPriceChangeDown1h:
