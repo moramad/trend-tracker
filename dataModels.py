@@ -310,8 +310,17 @@ def convertDate(dateString):
     result = dateParsing.strftime('%d-%m-%Y')
     return result
 
+def coinStandardized(coin):
+    symbol = coin.lower()            
+    query = {"$or":[{"id": symbol},{"name": symbol},{"symbol":symbol}]}
+    projection = {"id":1,'_id':0}
+    result = dbTrend.find(query,projection)
+    id = result[0]["id"]
+    return id
+
 def main():
     print("dataModels")
+    print(coinStandardized("btc"))
 
 if __name__ == "__main__":
     main()

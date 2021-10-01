@@ -13,7 +13,7 @@ currency = "usd"
 days = 30
 
 def priceSummarize(id):
-    try:
+    try:        
         symbol = searchTrend(id)[0]        
         # symbol = getCoinData(id)               
         id = symbol["id"]
@@ -258,6 +258,7 @@ def chartGenerator(df, tickerID, levels=None):
         return False             
 
 def generateChart(id):
+    id = id.lower()
     result = cg.get_coin_ohlc_by_id(id=id,vs_currency=currency,days=days)
     df = pd.DataFrame(result)
     df.columns = ["Date","Open","High","Low","Close"]

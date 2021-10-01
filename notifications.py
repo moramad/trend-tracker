@@ -3,6 +3,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHandler, Defaults, Filters, CallbackContext, CallbackQueryHandler
 import requests, os
 from dataCatcher import *
+from dataModels import *
 from coreAnalyzer import *
 from credentials import *
 
@@ -100,6 +101,7 @@ def chartCommand(update, context):
     try:
         context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")    
         coin = context.args[0]
+        coin = coinStandardized(coin)
         print(f"request from {update.effective_chat.username} | request {coin}")    
         context.bot.send_photo(chat_id=update.effective_chat.id, photo=open(f'chart/chart_{coin}.png', 'rb'))  
     except:

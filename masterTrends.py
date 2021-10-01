@@ -72,7 +72,8 @@ def searchTrend(symbol=None):
         if symbol is None :
             result = dbTrend.find()
         if symbol is not None :
-            query = {"id": symbol}
+            symbol = symbol.lower()            
+            query = {"$or":[{"id": symbol},{"name": symbol},{"symbol":symbol}]}
             result = dbTrend.find(query)        
         # listTrend = []
         # for item in result:
@@ -98,7 +99,8 @@ def searchHistory(symbol=None):
         if symbol is None :
             result = dbHistory.find()
         if symbol is not None :
-            query = {"id": symbol}
+            symbol = symbol.lower()            
+            query = {"$or":[{"id": symbol},{"name": symbol},{"symbol":symbol}]}
             result = dbHistory.find(query)        
         # listTrend = []
         # for item in result:
