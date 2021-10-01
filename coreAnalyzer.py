@@ -34,16 +34,16 @@ def priceSummarize(id):
         updateTime = symbol["updateTime"]
         percent2resistance = symbol["percent2resistance"]
         
-        format = f"<b>COIN SUMMARY</b> : {name} | {code.upper()} @ {updateTime} \n"
-        format = format + f"price = ${current_price:,} \n"
-        format = format + f"% 1h = {round(price_change_percentage_1h,2)}% \n"
-        format = format + f"% 24h = {round(price_change_percentage_24h,2)}% \n"
-        format = format + f" % 7d = {round(price_change_percentage_7d,2)}% \n"
-        format = format + f" % 30d = {round(price_change_percentage_30d,2)}% \n"            
-        format = format + f"volume = {total_volume:,} \n"
-        format = format + f"% ath = ${ath} @ {ath_date}, {round(ath_change_percentage,2)}% \n"    
-        format = format + f"% atl = ${atl} @ {atl_date}, {round(atl_change_percentage,2)}% \n"
-        format = format + f"% 2Res = ${percent2resistance}%"
+        format = f"<b>COIN SUMMARY</b> : {name} | {code.upper()} @ {updateTime} \n"          
+        format = format + f"💵 = 💲{current_price:,} \n"
+        format = format + f"📈1H = {round(price_change_percentage_1h,2)}% \n"
+        format = format + f"📈24H = {round(price_change_percentage_24h,2)}% \n"
+        format = format + f"📈7D = {round(price_change_percentage_7d,2)}% \n"
+        format = format + f"📈30D = {round(price_change_percentage_30d,2)}% \n"            
+        format = format + f"🧪24H = {total_volume:,} \n"
+        format = format + f"📈ATH = 💲{ath:,} @ {ath_date}, {round(ath_change_percentage,2)}% \n"    
+        format = format + f"📈ATL = 💲{atl:,} @ {atl_date}, {round(atl_change_percentage,2)}% \n"
+        format = format + f"💣 = ${percent2resistance}%"
         print(format)
         # telegram_sendMessage(format)
         return format
@@ -65,13 +65,15 @@ def topcapSummarize():
         percent2resistance = symbol["percent2resistance"]
         market_cap_rank = symbol["market_cap_rank"]      
         market_cap = symbol["market_data"]["market_cap"][currency]
-        
-        format = format + f"{market_cap_rank}. {id.upper()} ({code}) 💎MC: ${market_cap:,} 💰USD: ${current_price:,} {price_change_percentage_24h}% 📈{percent2resistance}% 2Res  \n"                
+        if type(percent2resistance) != str :
+            format = format + f"{market_cap_rank}. {id.upper()} ({code}) 💎MC:${(round(market_cap/1000000000,0)):,}B 💰:${current_price:,} 📈:{price_change_percentage_24h}% 💣:{percent2resistance}% \n"
+        else:
+            format = format + f"{market_cap_rank}. {id.upper()} ({code}) 💎MC:${(round(market_cap/1000000000,0)):,}B 💰:${current_price:,} 📈:{price_change_percentage_24h}% \n"
     format = format + f"Update @ {updateTime}"
     return format
 
 def marketSummarize():
-    threshold_change_percentage_1h = 3
+    threshold_change_percentage_1h = 2
     threshold_change_percentage_24h = 15
     threshold_change_percentage_7d = 150
     threshold_change_percentage_30d = 300
