@@ -51,11 +51,11 @@ def priceSummarize(id):
         print("An Error occured :: ", e)
         return False
 
-def indexSummarize():
-    index = searchTopIndex()
+def topcapSummarize():
+    topcap = searchTopCap()
     
-    format = f"<b>INDEX SUMMARY</b> : \n"
-    for symbol in index:
+    format = f"<b>TOPCAP SUMMARY</b> : \n"
+    for symbol in topcap:
         id = symbol["id"]
         code = symbol["symbol"]
         name = symbol["name"]
@@ -328,7 +328,7 @@ def coreAnalytic():
 def main():
     print("coreAnalyzer")
     print(marketSummarize())
-    # print(indexSummarize())
+    # print(topcapSummarize())
     # priceSummarize("bitcoin")
     # supports = getSupportResistanceArray("DOGE")     
     # getSupportResistance("btc")

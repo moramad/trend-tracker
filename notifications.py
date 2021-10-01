@@ -77,7 +77,7 @@ def helpCommand(update, context):
     response += f"/p &#60;coin&#62; - Coin's Price \n"    
     response += f"/c &#60;coin&#62; - Coin's Chart \n"    
     response += f"/m - Market Summarize \n"
-    response += f"/index - Top 10 by marketcap \n"
+    response += f"/topcap - Top 10 by marketcap \n"
     response += f"/best - Top 10 by best performance\n"
     response += f"/worst - Top 10 by worst performance\n"
     response += f"/suggest - near 0% support \n"
@@ -114,10 +114,10 @@ def marketCommand(update, context):
     result = marketSummarize()    
     context.bot.send_message(chat_id=update.effective_chat.id, text=result)
 
-def indexCommand(update, context):
+def topcapCommand(update, context):
     context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
     print(f"request from {update.effective_chat.username}")    
-    result = indexSummarize()    
+    result = topcapSummarize()    
     context.bot.send_message(chat_id=update.effective_chat.id, text=result)
 
 def bestCommand(update, context):
@@ -181,16 +181,16 @@ if __name__ == '__main__':
 
     updater = Updater(token=TELEGRAM_TOKEN, defaults=Defaults(parse_mode=ParseMode.HTML))
     dispatcher = updater.dispatcher
-
-    dispatcher.add_handler(CommandHandler("ping", pingCommand))
+    
     dispatcher.add_handler(CommandHandler("h", helpCommand))
     dispatcher.add_handler(CommandHandler("help", helpCommand))
-    
-    
+    dispatcher.add_handler(CommandHandler("start", helpCommand))
+
+    dispatcher.add_handler(CommandHandler("ping", pingCommand))        
     dispatcher.add_handler(CommandHandler("p", priceCommand))
     dispatcher.add_handler(CommandHandler("c", chartCommand))
     dispatcher.add_handler(CommandHandler("m", marketCommand))
-    dispatcher.add_handler(CommandHandler("index", indexCommand))
+    dispatcher.add_handler(CommandHandler("topcap", topcapCommand))
     dispatcher.add_handler(CommandHandler("best", bestCommand))
     dispatcher.add_handler(CommandHandler("worst", worstCommand))
     dispatcher.add_handler(CommandHandler("suggest", suggestCommand))
