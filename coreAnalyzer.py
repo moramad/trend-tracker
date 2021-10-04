@@ -82,17 +82,17 @@ def bestSummarize():
         code = symbol["symbol"]
         name = symbol["name"]
         current_price = symbol["market_data"]["current_price"][currency]
-        price_change_percentage_24h = round(symbol["market_data"]["price_change_percentage_24h"],2)
+        price_change_percentage_1h = round(symbol["market_data"]["price_change_percentage_1h"],2)
         updateTime = symbol["updateTime"]
         percent2resistance = symbol["percent2resistance"]
         market_cap_rank = symbol["market_cap_rank"]      
         market_cap = symbol["market_data"]["market_cap"][currency]
         
         format = format + f"{urut}. {id.upper()} ({code}) 💎${(round(market_cap/1000000000,0)):,}B 💰${current_price:,} "       
-        if price_change_percentage_24h > 0 :
-            format = format + f"📈{price_change_percentage_24h}% "
+        if price_change_percentage_1h > 0 :
+            format = format + f"📈{price_change_percentage_1h}% "
         else:
-            format = format + f"📉{price_change_percentage_24h}% "
+            format = format + f"📉{price_change_percentage_1h}% "
         if type(percent2resistance) != str :
             format = format + f"💣{percent2resistance}% \n"
         else:
@@ -112,7 +112,7 @@ def worstSummarize():
         code = symbol["symbol"]
         name = symbol["name"]
         current_price = symbol["market_data"]["current_price"][currency]
-        price_change_percentage_24h = round(symbol["market_data"]["price_change_percentage_24h"],2)
+        price_change_percentage_1h = round(symbol["market_data"]["price_change_percentage_1h"],2)
         updateTime = symbol["updateTime"]
         percent2resistance = symbol["percent2resistance"]
         market_cap_rank = symbol["market_cap_rank"]      
@@ -120,10 +120,10 @@ def worstSummarize():
         
         format = format + f"{urut}. {id.upper()} ({code}) 💎${(round(market_cap/1000000000,0)):,}B 💰${current_price:,} "
        
-        if price_change_percentage_24h > 0 :
-            format = format + f"📈{price_change_percentage_24h}% "
+        if price_change_percentage_1h > 0 :
+            format = format + f"📈{price_change_percentage_1h}% "
         else:
-            format = format + f"📉{price_change_percentage_24h}% "
+            format = format + f"📉{price_change_percentage_1h}% "
         if type(percent2resistance) != str :
             format = format + f"💣{percent2resistance}% \n"
         else:
