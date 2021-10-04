@@ -96,8 +96,8 @@ def searchTopCap():
 
 def searchBest():
     try:
-        query = {"market_data.price_change_percentage_24h":{"$lte": 10}}
-        querySort = "market_data.price_change_percentage_24h"
+        query = {"market_data.price_change_percentage_1h_in_currency.usd":{"$lte": 10}}
+        querySort = "market_data.price_change_percentage_1h_in_currency.usd"
         result = dbTrend.find().sort(querySort,-1).limit(10)
         return result
 
@@ -107,8 +107,8 @@ def searchBest():
 
 def searchWorst():
     try:
-        query = {"market_data.price_change_percentage_24h":{"$lte": 10}}
-        querySort = "market_data.price_change_percentage_24h"
+        query = {"market_data.price_change_percentage_1h_in_currency.usd":{"$lte": 10}}
+        querySort = "market_data.price_change_percentage_1h_in_currency.usd"
         result = dbTrend.find().sort(querySort).limit(10)
         return result
 
