@@ -81,8 +81,8 @@ def bestSummarize():
         id = symbol["id"]
         code = symbol["symbol"]
         name = symbol["name"]
-        current_price = symbol["market_data"]["current_price"][currency]
-        price_change_percentage_1h = round(symbol["market_data"]["price_change_percentage_1h"],2)
+        current_price = symbol["market_data"]["current_price"][currency]        
+        price_change_percentage_1h = round(symbol["market_data"]["price_change_percentage_1h_in_currency"][currency],2)
         updateTime = symbol["updateTime"]
         percent2resistance = symbol["percent2resistance"]
         market_cap_rank = symbol["market_cap_rank"]      
@@ -112,7 +112,7 @@ def worstSummarize():
         code = symbol["symbol"]
         name = symbol["name"]
         current_price = symbol["market_data"]["current_price"][currency]
-        price_change_percentage_1h = round(symbol["market_data"]["price_change_percentage_1h"],2)
+        price_change_percentage_1h = round(symbol["market_data"]["price_change_percentage_1h_in_currency"][currency],2)
         updateTime = symbol["updateTime"]
         percent2resistance = symbol["percent2resistance"]
         market_cap_rank = symbol["market_cap_rank"]      
