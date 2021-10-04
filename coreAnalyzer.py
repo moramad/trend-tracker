@@ -35,15 +35,15 @@ def priceSummarize(id):
         percent2resistance = symbol["percent2resistance"]
         
         format = f"<b>COIN SUMMARY</b> : {name} | {code.upper()} @ {updateTime} \n"          
-        format = format + f"💵 = 💲{current_price:,} \n"
-        format = format + f"📈1H = {round(price_change_percentage_1h,2)}% \n"
-        format = format + f"📈24H = {round(price_change_percentage_24h,2)}% \n"
-        format = format + f"📈7D = {round(price_change_percentage_7d,2)}% \n"
-        format = format + f"📈30D = {round(price_change_percentage_30d,2)}% \n"            
-        format = format + f"🧪24H = {total_volume:,} \n"
-        format = format + f"📈ATH = 💲{ath:,} @ {ath_date}, {round(ath_change_percentage,2)}% \n"    
-        format = format + f"📈ATL = 💲{atl:,} @ {atl_date}, {round(atl_change_percentage,2)}% \n"
-        format = format + f"💣 = ${percent2resistance}%"
+        format = format + f"💵 💲{current_price:,} \n"
+        format = format + f"📈1H {round(price_change_percentage_1h,2)}% \n"
+        format = format + f"📈24H {round(price_change_percentage_24h,2)}% \n"
+        format = format + f"📈7D {round(price_change_percentage_7d,2)}% \n"
+        format = format + f"📈30D {round(price_change_percentage_30d,2)}% \n"            
+        format = format + f"🧪24H {total_volume:,} \n"
+        format = format + f"📈ATH 💲{ath:,} @ {ath_date}, {round(ath_change_percentage,2)}% \n"    
+        format = format + f"📈ATL 💲{atl:,} @ {atl_date}, {round(atl_change_percentage,2)}% \n"
+        format = format + f"💣 ${percent2resistance}%"
         print(format)
         # telegram_sendMessage(format)
         return format
