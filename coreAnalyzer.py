@@ -72,8 +72,69 @@ def topcapSummarize():
     format = format + f"Update @ {updateTime}"
     return format
 
+def bestSummarize():
+    best = searchBest()
+    
+    format = f"<b>BEST SUMMARY</b> : \n"
+    urut = 1
+    for symbol in best:
+        id = symbol["id"]
+        code = symbol["symbol"]
+        name = symbol["name"]
+        current_price = symbol["market_data"]["current_price"][currency]
+        price_change_percentage_24h = round(symbol["market_data"]["price_change_percentage_24h"],2)
+        updateTime = symbol["updateTime"]
+        percent2resistance = symbol["percent2resistance"]
+        market_cap_rank = symbol["market_cap_rank"]      
+        market_cap = symbol["market_data"]["market_cap"][currency]
+        
+        format = format + f"{urut}. {id.upper()} ({code}) 💎${(round(market_cap/1000000000,0)):,}B 💰${current_price:,} "       
+        if price_change_percentage_24h > 0 :
+            format = format + f"📈{price_change_percentage_24h}% "
+        else:
+            format = format + f"📉{price_change_percentage_24h}% "
+        if type(percent2resistance) != str :
+            format = format + f"💣{percent2resistance}% \n"
+        else:
+            format = format + f"\n"
+        
+        urut += 1
+    format = format + f"Update @ {updateTime}"
+    return format
+
+def worstSummarize():
+    worst = searchWorst()
+    
+    format = f"<b>WORST SUMMARY</b> : \n"
+    urut = 1
+    for symbol in worst:
+        id = symbol["id"]
+        code = symbol["symbol"]
+        name = symbol["name"]
+        current_price = symbol["market_data"]["current_price"][currency]
+        price_change_percentage_24h = round(symbol["market_data"]["price_change_percentage_24h"],2)
+        updateTime = symbol["updateTime"]
+        percent2resistance = symbol["percent2resistance"]
+        market_cap_rank = symbol["market_cap_rank"]      
+        market_cap = symbol["market_data"]["market_cap"][currency]
+        
+        format = format + f"{urut}. {id.upper()} ({code}) 💎${(round(market_cap/1000000000,0)):,}B 💰${current_price:,} "
+       
+        if price_change_percentage_24h > 0 :
+            format = format + f"📈{price_change_percentage_24h}% "
+        else:
+            format = format + f"📉{price_change_percentage_24h}% "
+        if type(percent2resistance) != str :
+            format = format + f"💣{percent2resistance}% \n"
+        else:
+            format = format + f"\n"
+
+        urut += 1
+    format = format + f"Update @ {updateTime}"
+    return format
+
 def marketSummarize():
-    threshold_change_percentage_1h = 2
+    threshold_change_percentage_1h = 1
     threshold_change_percentage_24h = 15
     threshold_change_percentage_7d = 150
     threshold_change_percentage_30d = 300
@@ -173,7 +234,7 @@ def marketSummarize():
         if flPriceChangeDown30d and (price_change_percentage_24h != price_change_percentage_30d):
             notif = notif + f"📉 {round(price_change_percentage_30d,2)}% 30D, "
         if fl2Resistance:
-            notif = notif + f"🧨{round(percent2resistance,2)}%"
+            notif = notif + f"💣{round(percent2resistance,2)}%"
         if flnotif:                    
             content.append(notif)
             

@@ -122,16 +122,14 @@ def topcapCommand(update, context):
 
 def bestCommand(update, context):
     context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
-    print(f"request from {update.effective_chat.username}")
-    coin = context.args[0]
-    result = priceSummarize(coin)    
+    print(f"request from {update.effective_chat.username}")    
+    result = bestSummarize()
     context.bot.send_message(chat_id=update.effective_chat.id, text=result)
 
 def worstCommand(update, context):
     context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
-    print(f"request from {update.effective_chat.username}")
-    coin = context.args[0]
-    result = priceSummarize(coin)    
+    print(f"request from {update.effective_chat.username}")    
+    result = worstSummarize()    
     context.bot.send_message(chat_id=update.effective_chat.id, text=result)
 
 def suggestCommand(update, context):

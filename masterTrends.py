@@ -94,6 +94,28 @@ def searchTopCap():
         print("An Error occured :: ", e)
         return False
 
+def searchBest():
+    try:
+        query = {"market_data.price_change_percentage_24h":{"$lte": 10}}
+        querySort = "market_data.price_change_percentage_24h"
+        result = dbTrend.find().sort(querySort,-1).limit(10)
+        return result
+
+    except Exception as e:
+        print("An Error occured :: ", e)
+        return False
+
+def searchWorst():
+    try:
+        query = {"market_data.price_change_percentage_24h":{"$lte": 10}}
+        querySort = "market_data.price_change_percentage_24h"
+        result = dbTrend.find().sort(querySort).limit(10)
+        return result
+
+    except Exception as e:
+        print("An Error occured :: ", e)
+        return False
+
 def searchHistory(symbol=None):
     try:        
         if symbol is None :
@@ -124,7 +146,7 @@ def deleteTrend(symbol=None):
 
 def main():
     print("MasterTrends")
-    searchTopCap()
+    searchBest()
     # deleteTrend()
     # configIndex()    
     # print(searchTrend())
