@@ -207,7 +207,8 @@ def marketSummarize():
             flnotif = True
             flPriceChangeDown30d = True
         if type(percent2resistance) != str:
-            if percent2resistance < threshold_percent2resistance and percent2resistance > -threshold_percent2resistance:
+            if (percent2resistance < threshold_percent2resistance and percent2resistance > -threshold_percent2resistance) \
+                or (percent2resistance > (100 - threshold_percent2resistance) and percent2resistance < (100 + threshold_percent2resistance)):
                 flnotif = True
                 fl2Resistance = True
 
@@ -216,7 +217,7 @@ def marketSummarize():
         if flath:
             notif = notif + f"${current_price:,}, ATH ${ath}, "
         if flatl:
-            notif = notif + f"${current_price:,}, ATL ${ath}, "
+            notif = notif + f"${current_price:,}, ATL ${atl}, "
         if flPriceChangeUp1h:
             notif = notif + f"📈 {round(price_change_percentage_1h,2)}% 1H, "
         if flPriceChangeDown1h:
