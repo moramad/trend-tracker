@@ -146,10 +146,10 @@ def deleteTrend(symbol=None):
 
 def main():
     print("MasterTrends")
-    searchBest()
+    # searchBest()
     # deleteTrend()
     # configIndex()    
-    # print(searchTrend())
+    print(searchTrend("shib"))
     
 
 if __name__ == "__main__":

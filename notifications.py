@@ -6,6 +6,8 @@ from dataCatcher import *
 from dataModels import *
 from coreAnalyzer import *
 from credentials import *
+from requests import get
+
 
 TELEGRAM_TOKEN = telegramToken()
 
@@ -69,6 +71,12 @@ def priceAlertCallback(context):
 ##########################################
 def pingCommand(update, context):        
     context.bot.send_message(chat_id=update.effective_chat.id, text='⚠️PONG')
+
+def showIPCommand(update, context):        
+    context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
+    ipAddress = get('https://api.ipify.org').content.decode('utf8')
+    print(f"IP : {ipAddress}")
+    context.bot.send_message(chat_id=update.effective_chat.id, text=ipAddress)
 
 def helpCommand(update, context):
     response = f"<b>Menu Commands:</b> \n"
@@ -183,6 +191,7 @@ if __name__ == '__main__':
     dispatcher.add_handler(CommandHandler("h", helpCommand))
     dispatcher.add_handler(CommandHandler("help", helpCommand))
     dispatcher.add_handler(CommandHandler("start", helpCommand))
+    dispatcher.add_handler(CommandHandler("ip", showIPCommand))
 
     dispatcher.add_handler(CommandHandler("ping", pingCommand))        
     dispatcher.add_handler(CommandHandler("p", priceCommand))
