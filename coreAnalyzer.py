@@ -211,13 +211,14 @@ def marketSummarize():
                 or (percent2resistance > (100 - threshold_percent2resistance) and percent2resistance < (100 + threshold_percent2resistance)):
                 flnotif = True
                 fl2Resistance = True
-
+        
         if flnotif:
-            notif = f"- {id.upper()} | {code.upper()} "
+            notif = f"- {id.upper()} | {code.upper()} |"
+            notif = notif + f"${current_price:,}, "
         if flath:
-            notif = notif + f"${current_price:,}, ATH ${ath}, "
+            notif = notif + f"ATH ${ath}, "
         if flatl:
-            notif = notif + f"${current_price:,}, ATL ${atl}, "
+            notif = notif + f"ATL ${atl}, "
         if flPriceChangeUp1h:
             notif = notif + f"📈 {round(price_change_percentage_1h,2)}% 1H, "
         if flPriceChangeDown1h:
