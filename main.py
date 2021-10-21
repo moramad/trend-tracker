@@ -2,6 +2,7 @@ from masterSymbols import *
 from masterAccounts import *
 from dataCatcher import *
 from coreAnalyzer import *
+from dataAnalyze import *
 import csv
 
 def registerCoins():
@@ -29,13 +30,12 @@ def registerStock():
     print("finished register stock")
 
 def main():
-    # print("test")    
+    print("main")    
     # unregisterSymbols()
     # registerCoins()
     # registerStock()     
     # deleteTrend()   
-    print(trendUpdater())   
-    print(coreAnalytic())     
+      
 
 if __name__ == "__main__":    
     main()

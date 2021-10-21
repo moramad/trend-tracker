@@ -22,18 +22,6 @@ def updateTrend(coin):
         print("An Error occured :: ", e)
         return False
 
-def updateHistory(coin):
-    try:
-        id = coin["id"]    
-        updateTime = coin["updateTime"]    
-        query = {"id": id, "updateTime": updateTime}        
-        set = {"$set": coin}
-        result = dbHistory.update_many(query,set,upsert=True)
-        return result
-    except Exception as e:
-        print("An Error occured :: ", e)
-        return False
-
 def updateTrendSupportResistance(coin):
     try:
         id = coin["id"]
@@ -41,14 +29,14 @@ def updateTrendSupportResistance(coin):
         supports = coin["supports"]
         support = coin["support"]
         resistance = coin["resistance"]
-        percent2resistance = coin["percent2resistance"]
+        percent_2_resistance = coin["percent_2_resistance"]
 
         query = {"id": id}        
         set = {"$set": {"supports": supports,
                         "support": support,
                         "resistance": resistance,
                         "updateTime": updateTime,
-                        "percent2resistance": percent2resistance}}
+                        "percent_2_resistance": percent_2_resistance}}
                         
         result = dbTrend.update_many(query,set,upsert=True)
         return result
@@ -112,23 +100,6 @@ def searchWorst():
         result = dbTrend.find().sort(querySort).limit(10)
         return result
 
-    except Exception as e:
-        print("An Error occured :: ", e)
-        return False
-
-def searchHistory(symbol=None):
-    try:        
-        if symbol is None :
-            result = dbHistory.find()
-        if symbol is not None :
-            symbol = symbol.lower()            
-            query = {"$or":[{"id": symbol},{"name": symbol},{"symbol":symbol}]}
-            result = dbHistory.find(query)        
-        # listTrend = []
-        # for item in result:
-        #     listTrend.append(item)    
-        # return listTrend        
-        return result
     except Exception as e:
         print("An Error occured :: ", e)
         return False

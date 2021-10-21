@@ -41,7 +41,8 @@ def updateTickerSymbols(symbolID, tickerID):
 def searchSymbols(query=None):
     try:        
         if query is None :
-            result = dbSymbol.find()
+            query = {"allowUpdate":True}
+            result = dbSymbol.find(query)
         if query is not None :
             result = dbSymbol.find(query)        
         listSymbol = []

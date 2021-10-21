@@ -4,7 +4,7 @@ from telegram.ext import Updater, InlineQueryHandler, CommandHandler, MessageHan
 import requests, os
 from dataCatcher import *
 from dataModels import *
-from coreAnalyzer import *
+from dataAnalyze import *
 from credentials import *
 from requests import get
 
@@ -23,7 +23,7 @@ def checkPID():
 def telegram_sendMessage(bot_message):
    bot_token = TELEGRAM_TOKEN
    bot_chatID = telegramChatID()
-   send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=Markdown&text=' + bot_message
+   send_text = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + bot_chatID + '&parse_mode=HTML&text=' + bot_message
 
    response = requests.get(send_text)
    return response.json()
@@ -144,7 +144,7 @@ def suggestCommand(update, context):
     context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")
     print(f"request from {update.effective_chat.username}")
     coin = context.args[0]
-    result = priceSummarize(coin)    
+    result = suggestSummarize(coin)    
     context.bot.send_message(chat_id=update.effective_chat.id, text=result)
 
 ##########################################

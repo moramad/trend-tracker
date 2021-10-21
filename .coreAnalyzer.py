@@ -1,6 +1,7 @@
 from notifications import *
 from dataModels import *
 from masterTrends import *
+from masterHistories import *
 
 import matplotlib.dates as mpl_dates
 import matplotlib.pyplot as plt
@@ -14,36 +15,36 @@ days = 30
 
 def priceSummarize(id):
     try:        
-        symbol = searchTrend(id)[0]        
-        # symbol = getCoinData(id)               
-        id = symbol["id"]
-        code = symbol["symbol"]
-        name = symbol["name"]
-        current_price = symbol["market_data"]["current_price"][currency]
-        price_change_percentage_1h = symbol["market_data"]["price_change_percentage_1h_in_currency"][currency]
-        price_change_percentage_24h = symbol["market_data"]["price_change_percentage_24h"]
-        price_change_percentage_7d = symbol["market_data"]["price_change_percentage_7d"]
-        price_change_percentage_30d = symbol["market_data"]["price_change_percentage_30d"]
-        total_volume = symbol["market_data"]["total_volume"][currency]
-        ath = symbol["market_data"]["ath"][currency]
-        atl = symbol["market_data"]["atl"][currency]    
-        ath_date = convertDate(symbol["market_data"]["ath_date"][currency])     
-        atl_date = convertDate(symbol["market_data"]["atl_date"][currency])
-        ath_change_percentage = symbol["market_data"]["ath_change_percentage"][currency]    
-        atl_change_percentage = symbol["market_data"]["atl_change_percentage"][currency]        
-        updateTime = symbol["updateTime"]
-        percent2resistance = symbol["percent2resistance"]
+        item = searchHistory(id)[0]        
+        # item = getCoinData(id)               
+        id = item["id"]
+        code = item["symbol"]
+        name = item["name"]
+        current_price = item["current_price"]
+        price_change_percentage_1h = item["price_change_percentage_1h"]
+        price_change_percentage_24h = item["price_change_percentage_24h"]
+        price_change_percentage_7d = item["price_change_percentage_7d"]
+        price_change_percentage_30d = item["price_change_percentage_30d"]
+        total_volume = item["total_volume"]
+        ath = item["ath"]
+        atl = item["atl"]
+        ath_date = item["ath_date"]
+        atl_date = item["atl_date"]
+        ath_change_percentage = item["ath_change_percentage"]
+        atl_change_percentage = item["atl_change_percentage"]
+        updateTime = item["updateTime"]
+        # percent_2_resistance = item["percent_2_resistance"]
         
         format = f"<b>COIN SUMMARY</b> : {name} | {code.upper()} @ {updateTime} \n"          
-        format = format + f"💵 💲{current_price:,} \n"
+        format = format + f"💵💲{current_price:,} \n"
         format = format + f"📈1H {round(price_change_percentage_1h,2)}% \n"
         format = format + f"📈24H {round(price_change_percentage_24h,2)}% \n"
         format = format + f"📈7D {round(price_change_percentage_7d,2)}% \n"
         format = format + f"📈30D {round(price_change_percentage_30d,2)}% \n"            
         format = format + f"🧪24H {total_volume:,} \n"
-        format = format + f"📈ATH 💲{ath:,} @ {ath_date}, {round(ath_change_percentage,2)}% \n"    
-        format = format + f"📈ATL 💲{atl:,} @ {atl_date}, {round(atl_change_percentage,2)}% \n"
-        format = format + f"💣 ${percent2resistance}%"
+        format = format + f"📈ATH💲{ath:,} @ {ath_date}, {round(ath_change_percentage,2)}% \n"    
+        format = format + f"📈ATL💲{atl:,} @ {atl_date}, {round(atl_change_percentage,2)}% \n"
+        # format = format + f"💣 ${percent_2_resistance}%"
         print(format)
         # telegram_sendMessage(format)
         return format
@@ -62,11 +63,11 @@ def topcapSummarize():
         current_price = symbol["market_data"]["current_price"][currency]
         price_change_percentage_24h = round(symbol["market_data"]["price_change_percentage_24h"],2)
         updateTime = symbol["updateTime"]
-        percent2resistance = symbol["percent2resistance"]
+        percent_2_resistance = symbol["percent_2_resistance"]
         market_cap_rank = symbol["market_cap_rank"]      
         market_cap = symbol["market_data"]["market_cap"][currency]
-        if type(percent2resistance) != str :
-            format = format + f"{market_cap_rank}. {id.upper()} ({code}) 💎MC:${(round(market_cap/1000000000,0)):,}B 💰:${current_price:,} 📈:{price_change_percentage_24h}% 💣:{percent2resistance}% \n"
+        if type(percent_2_resistance) != str :
+            format = format + f"{market_cap_rank}. {id.upper()} ({code}) 💎MC:${(round(market_cap/1000000000,0)):,}B 💰:${current_price:,} 📈:{price_change_percentage_24h}% 💣:{percent_2_resistance}% \n"
         else:
             format = format + f"{market_cap_rank}. {id.upper()} ({code}) 💎MC:${(round(market_cap/1000000000,0)):,}B 💰:${current_price:,} 📈:{price_change_percentage_24h}% \n"
     format = format + f"Update @ {updateTime}"
@@ -84,7 +85,7 @@ def bestSummarize():
         current_price = symbol["market_data"]["current_price"][currency]        
         price_change_percentage_1h = round(symbol["market_data"]["price_change_percentage_1h_in_currency"][currency],2)
         updateTime = symbol["updateTime"]
-        percent2resistance = symbol["percent2resistance"]
+        percent_2_resistance = symbol["percent_2_resistance"]
         market_cap_rank = symbol["market_cap_rank"]      
         market_cap = symbol["market_data"]["market_cap"][currency]
         
@@ -93,8 +94,8 @@ def bestSummarize():
             format = format + f"📈{price_change_percentage_1h}% "
         else:
             format = format + f"📉{price_change_percentage_1h}% "
-        if type(percent2resistance) != str :
-            format = format + f"💣{percent2resistance}% \n"
+        if type(percent_2_resistance) != str :
+            format = format + f"💣{percent_2_resistance}% \n"
         else:
             format = format + f"\n"
         
@@ -114,7 +115,7 @@ def worstSummarize():
         current_price = symbol["market_data"]["current_price"][currency]
         price_change_percentage_1h = round(symbol["market_data"]["price_change_percentage_1h_in_currency"][currency],2)
         updateTime = symbol["updateTime"]
-        percent2resistance = symbol["percent2resistance"]
+        percent_2_resistance = symbol["percent_2_resistance"]
         market_cap_rank = symbol["market_cap_rank"]      
         market_cap = symbol["market_data"]["market_cap"][currency]
         
@@ -124,8 +125,8 @@ def worstSummarize():
             format = format + f"📈{price_change_percentage_1h}% "
         else:
             format = format + f"📉{price_change_percentage_1h}% "
-        if type(percent2resistance) != str :
-            format = format + f"💣{percent2resistance}% \n"
+        if type(percent_2_resistance) != str :
+            format = format + f"💣{percent_2_resistance}% \n"
         else:
             format = format + f"\n"
 
@@ -139,7 +140,7 @@ def marketSummarize():
     threshold_change_percentage_7d = 150
     threshold_change_percentage_30d = 300
     threshold_ath_change_percentage = 5
-    threshold_percent2resistance = 5
+    threshold_percent_2_resistance = 5
     listSymbol = searchTrend()    
     content = []
     
@@ -173,7 +174,7 @@ def marketSummarize():
         atl_date = convertDate(symbol["market_data"]["atl_date"][currency])
         ath_change_percentage = symbol["market_data"]["ath_change_percentage"][currency]    
         atl_change_percentage = symbol["market_data"]["atl_change_percentage"][currency]       
-        percent2resistance = symbol["percent2resistance"]
+        percent_2_resistance = symbol["percent_2_resistance"]
         updateTime = symbol["updateTime"]
         
         if ath_change_percentage >= -threshold_ath_change_percentage :
@@ -206,9 +207,9 @@ def marketSummarize():
         if price_change_percentage_30d < -threshold_change_percentage_30d :
             flnotif = True
             flPriceChangeDown30d = True
-        if type(percent2resistance) != str:
-            if (percent2resistance < threshold_percent2resistance and percent2resistance > -threshold_percent2resistance) \
-                or (percent2resistance > (100 - threshold_percent2resistance) and percent2resistance < (100 + threshold_percent2resistance)):
+        if type(percent_2_resistance) != str:
+            if (percent_2_resistance < threshold_percent_2_resistance and percent_2_resistance > -threshold_percent_2_resistance) \
+                or (percent_2_resistance > (100 - threshold_percent_2_resistance) and percent_2_resistance < (100 + threshold_percent_2_resistance)):
                 flnotif = True
                 fl2Resistance = True
         
@@ -216,9 +217,9 @@ def marketSummarize():
             notif = f"- {id.upper()} | {code.upper()} |"
             notif = notif + f"${current_price:,}, "
         if flath:
-            notif = notif + f"ATH ${ath}, "
+            notif = notif + f"ATH ${ath:,}, "
         if flatl:
-            notif = notif + f"ATL ${atl}, "
+            notif = notif + f"ATL ${atl:,}, "
         if flPriceChangeUp1h:
             notif = notif + f"📈 {round(price_change_percentage_1h,2)}% 1H, "
         if flPriceChangeDown1h:
@@ -236,7 +237,7 @@ def marketSummarize():
         if flPriceChangeDown30d and (price_change_percentage_24h != price_change_percentage_30d):
             notif = notif + f"📉 {round(price_change_percentage_30d,2)}% 30D, "
         if fl2Resistance:
-            notif = notif + f"💣{round(percent2resistance,2)}%"
+            notif = notif + f"💣{round(percent_2_resistance,2)}%"
         if flnotif:                    
             content.append(notif)
             
@@ -244,6 +245,7 @@ def marketSummarize():
         result = "\n".join(content)        
         return result
 
+# SupportResistance
 def getSupportResistanceArray(df):    
     # ticker = yfinance.Ticker(symbol+'-'+currency.upper())
     # data = ticker.info
@@ -366,15 +368,15 @@ def coreAnalytic():
                     try:
                         support = supres[0]
                         resistance = supres[1]
-                        percent2resistance = ((current_price - support) / (resistance - support)) * 100
-                        percent2resistance = round(percent2resistance,2)
+                        percent_2_resistance = ((current_price - support) / (resistance - support)) * 100
+                        percent_2_resistance = round(percent_2_resistance,2)
                     except Exception as e:                        
                         print(f"An Error occured : {e}")
-                        percent2resistance = "NA"                                            
+                        percent_2_resistance = "NA"                                            
                 else:
                     support = 0
                     resistance = 0
-                    percent2resistance = "NA"
+                    percent_2_resistance = "NA"
                 
                 coin = {}                
                 coin.update({"id": tickerID})                
@@ -382,7 +384,7 @@ def coreAnalytic():
                 coin.update({"supports": supports})
                 coin.update({"support": support})
                 coin.update({"resistance": resistance})
-                coin.update({"percent2resistance": percent2resistance})    
+                coin.update({"percent_2_resistance": percent_2_resistance})    
                 updateTrendSupportResistance(coin)                                
                 chartGenerator(df, tickerID, levels)
             except Exception as e:
@@ -391,10 +393,10 @@ def coreAnalytic():
     return True    
 
 def main():
-    print("coreAnalyzer")
-    print(marketSummarize())
+    print("coreAnalyzer")    
+    # print(marketSummarize())
     # print(topcapSummarize())
-    # priceSummarize("bitcoin")
+    priceSummarize("bitcoin")
     # supports = getSupportResistanceArray("DOGE")     
     # getSupportResistance("btc")
     # getSupportResistance("ada")    
