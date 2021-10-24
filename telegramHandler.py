@@ -8,11 +8,15 @@ from dataAnalyze import *
 from connSetting import *
 from requests import get
 
+import logging 
+logging.basicConfig(format='%(asctime)s %(levelname)-4s [%(filename)s:%(lineno)d] %(message)s',
+    datefmt='%d-%m-%Y:%H:%M:%S',level=logging.INFO,filename='trendTracker.log')
+logger = logging.getLogger('trendTracker')
 
 TELEGRAM_TOKEN = telegramToken()
 
 def checkPID():
-    process = "notification"         
+    process = "telegramHandler"         
     nlist = 0
     for line in os.popen("ps ax | grep " + process + " | grep -v grep"):
         nlist += 1                    
