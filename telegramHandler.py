@@ -39,7 +39,7 @@ def priceAlert(update, context):
         context.job_queue.run_repeating(priceAlertCallback, interval=15, first=15, context=[crypto, sign, price, update.message.chat_id])
         
         response = f"⏳ I will send you a message when the price of {crypto} reaches £{price}, \n"
-        response += f"the current price of {crypto} is £{coinbase_client.get_spot_price(currency_pair=crypto + '-GBP')['amount']}"
+        response += f"the current price of {crypto} is £"
     else:
         response = '⚠️ Please provide a crypto code and a price value: \n<i>/price_alert {crypto code} {> / &lt;} {price}</i>'
     
@@ -52,7 +52,7 @@ def priceAlertCallback(context):
     chat_id = context.job.context[3]
 
     send = False
-    spot_price = coinbase_client.get_spot_price(currency_pair=crypto + '-GBP')['amount']
+    spot_price = 1
 
     if sign == '<':
         if float(price) >= float(spot_price):
@@ -215,5 +215,6 @@ if __name__ == '__main__':
 
     updater.start_polling() # Start the bot
     print("notification polling running")
+    telegram_sendMessage("Service Telegram Started")
         
     updater.idle() # Wait for the script to be stopped, this will stop the bot as well    

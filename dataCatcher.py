@@ -69,7 +69,8 @@ def trendUpdater():
 
 def dataUpdater():
     logging.info("Start Data Catcher")
-    listSymbol = searchSymbols()
+    query = {"allowUpdate":True}
+    listSymbol = searchSymbols(query)
     for item in listSymbol:        
         symbolID = item["symbolID"]
         symbolType = item["symbolType"]
@@ -128,15 +129,17 @@ def dataUpdater():
                     last_high = datahistory["high"]
                     last_low = datahistory["low"]
                     last_market_cap = datahistory["market_cap"]
+                    last_trend_current_price = datahistory["trend_current_price"]
+                    
                     # formula
                     # intervalTime = updateTime - last_updateTime
-                    trend_current_price = round(current_price - last_current_price,2)
+                    trend_current_price = current_price - last_current_price
                     percent_trend_current_price = round((trend_current_price / last_current_price) * 100,2)
-                    count_trend_current_price = datahistory["count_trend_current_price"]      
+                    count_trend_current_price = datahistory["count_trend_current_price"]
 
-                    if trend_current_price > 0 : 
+                    if trend_current_price > 0 and last_trend_current_price > 0 : 
                         count_trend_current_price += 1
-                    elif trend_current_price < 0 : 
+                    elif trend_current_price < 0 and last_trend_current_price < 0 : 
                         count_trend_current_price -= 1
                     else :
                         count_trend_current_price = 0
@@ -171,7 +174,7 @@ def dataUpdater():
                 result = updateHistory(coin)                                     
             except Exception as e:                
                 print("An Error occured in dataUpdater : ", e)
-                logging.error("Data catcher error : ", e)
+                logging.error(f"An Error occured in dataUpdater : {e}")
                 return False    
     logging.info("Finish Data Catcher")
 

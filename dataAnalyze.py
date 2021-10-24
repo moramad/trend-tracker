@@ -4,7 +4,6 @@ from masterSymbols import *
 from masterHistories import *
 from dataCatcher import *
 from dataModels import *
-from notifications import *
 
 import logging 
 logging.basicConfig(format='%(asctime)s %(levelname)-4s [%(filename)s:%(lineno)d] %(message)s',
