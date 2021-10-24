@@ -9,7 +9,7 @@ USDT,tether
 BNB,binance-coin
 XRP,xrp
 DOGE,dogecoin
-DOT,polkadot
+DOT1,polkadot
 USDC,usd-coin
 LUNA,terra-luna
 BUSD,binance-usd
@@ -50,3 +50,4 @@ NEAR,near
 STETH,lido-staked-ether
 FTM,fantom
 AXS,axie-infinity
+SHIB,shiba-inu

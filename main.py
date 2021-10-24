@@ -31,7 +31,7 @@ def registerStock():
 def main():
     print("main")    
     # unregisterSymbols()
-    # registerCoins()
+    registerCoins()
     # registerStock()     
     # deleteTrend()   
       

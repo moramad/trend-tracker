@@ -71,7 +71,7 @@ def priceSummarize(id):
         # telegram_sendMessage(format)
         return format
     except Exception as e:
-        logger.error(f"An Error occured in priceSummarize :: {e}")
+        logger.error(f"An Error occured in priceSummarize with ID={symbol} :: {e}")
         print("An Error occured priceSummarize: ", e)
         return False
 

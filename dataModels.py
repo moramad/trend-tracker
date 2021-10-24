@@ -28,16 +28,20 @@ def Symbols(symbolID, symbolType, allowUpdate, tickerID):
     return data
 
 def rounding(angka):
-    strAngka = str(angka)
-    strAngkaAsli = strAngka.split(".")[0]
-    strAngkaDesimal = strAngka.split(".")[1]
-    if len(strAngkaAsli) > 3:
-        result = int(strAngkaAsli)
-    elif strAngkaAsli != '0':
-        result = round(angka, 2)
-    else:
-        result = round(angka, 5)
-    return result
+    try:                
+        strAngka = str(angka)    
+        strAngkaAsli = strAngka.split(".")[0]
+        strAngkaDesimal = strAngka.split(".")[1]
+        if len(strAngkaAsli) > 3:
+            result = int(strAngkaAsli)
+        elif strAngkaAsli != '0':
+            result = round(angka, 2)
+        else:
+            result = angka        
+        return result
+    except Exception as e:
+        logger.error(f"An Error occured in rounding with input={angka} :: {e}")
+        return False
 
 def Coins(id, currentPrice, dateTrans):
     data = {

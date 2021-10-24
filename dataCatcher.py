@@ -45,7 +45,7 @@ def getCoinData(id):
         result = cg.get_coin_by_id(id)
         return result
     except Exception as e:
-        logger.error(f"An Error occured in getCoinData :: {e}")
+        logger.error(f"An Error occured in getCoinData with ID={id}: {e}")
         return False
 
 # inactive
@@ -90,7 +90,7 @@ def dataUpdater():
                     datahistory = searchHistory(tickerID)[0]
                     last_updateTime = datahistory["updateTime"]                    
                     print(f"Update Data {tickerID}")
-                    # logging.info(f"Update Data {tickerID}")
+                    # logging.info(f"Update Data {tickerID}")                    
                     initialize = False
                 except:                    
                     # logging.info(f"Insert Data {tickerID}")
@@ -198,31 +198,31 @@ def getSupportResistanceArray(df):
     # start_time = '2021-05-01'
     # end_time = datetime.now().strftime("%Y-%m-%d")
     # df = ticker.history(interval="1d",start=start_time, end=end_time)    
+    try:
+        def isSupport(df,i):
+            support = df['Low'][i] < df['Low'][i-1]  and df['Low'][i] < df['Low'][i+1] and df['Low'][i+1] < df['Low'][i+2] and df['Low'][i-1] < df['Low'][i-2]
+            return support
+        def isResistance(df,i):
+            resistance = df['High'][i] > df['High'][i-1]  and df['High'][i] > df['High'][i+1] and df['High'][i+1] > df['High'][i+2] and df['High'][i-1] > df['High'][i-2]
+            return resistance
+        def isFarFromLevel(l):
+            return np.sum([abs(l-x) < s  for x in levels]) == 0
 
-    def isSupport(df,i):
-        support = df['Low'][i] < df['Low'][i-1]  and df['Low'][i] < df['Low'][i+1] and df['Low'][i+1] < df['Low'][i+2] and df['Low'][i-1] < df['Low'][i-2]
-        return support
-    def isResistance(df,i):
-        resistance = df['High'][i] > df['High'][i-1]  and df['High'][i] > df['High'][i+1] and df['High'][i+1] > df['High'][i+2] and df['High'][i-1] > df['High'][i-2]
-        return resistance
-    def isFarFromLevel(l):
-        return np.sum([abs(l-x) < s  for x in levels]) == 0
-
-    s =  np.mean(df['High'] - df['Low']) * 2
-    levels = []
-    for i in range(2,df.shape[0]-2):
-        if isSupport(df,i):
-            l = df['Low'][i]            
-            if isFarFromLevel(l):
-                levels.append((i,l))
-        elif isResistance(df,i):
-            l = df['High'][i]            
-            if isFarFromLevel(l):
-                levels.append((i,l))    
-    return levels
-    
-    
-    return supports
+        s =  np.mean(df['High'] - df['Low']) * 2
+        levels = []
+        for i in range(2,df.shape[0]-2):
+            if isSupport(df,i):
+                l = df['Low'][i]            
+                if isFarFromLevel(l):
+                    levels.append((i,l))
+            elif isResistance(df,i):
+                l = df['High'][i]            
+                if isFarFromLevel(l):
+                    levels.append((i,l))    
+        return levels
+    except Exception as e:
+        logger.error(f"An Error occured in getSupportResistanceArray :: {e}")
+        return False        
     
 def takeClosest(num,listSupports):
     listSupports.sort()
@@ -273,10 +273,11 @@ def chartGenerator(df, tickerID, levels=None):
 def getSupportResistance():
     logger.info("Start Get Support Resistance Loop")
     listSymbol = searchSymbols()
+    # listSymbol = searchSymbols({'tickerID':'shiba-inu'})
     for item in listSymbol:        
         symbolType = item["symbolType"]  
         symbolID = item["symbolID"]      
-        tickerID = item["tickerID"]        
+        tickerID = item["tickerID"]                
         if symbolType == "crypto":                        
             try:   
                 updateTime = datetime.today()
@@ -285,14 +286,13 @@ def getSupportResistance():
                 df.columns = ["Date","Open","High","Low","Close"]
                 df['Date'] = pd.to_datetime(df['Date'],unit='ms')
                 df['Date'] = df['Date'].apply(mpl_dates.date2num)
-                df = df.loc[:,['Date', 'Open', 'High', 'Low', 'Close']]                                             
+                df = df.loc[:,['Date', 'Open', 'High', 'Low', 'Close']]                                     
 
-                levels = getSupportResistanceArray(df)
+                levels = getSupportResistanceArray(df)                    
                 supports = []
-                for level in levels :
+                for level in levels :                    
                     support = rounding(level[1])
-                    supports.append(support)
-
+                    supports.append(support)                
                 coinData = searchHistory(tickerID)[0]  
                 current_price = coinData["current_price"]    
                 supres = takeClosest(current_price, supports)                                
