@@ -5,12 +5,17 @@ from typing import Optional
 from connSetting import *
 import dateutil.parser
 
+import logging 
+logging.basicConfig(format='%(asctime)s %(levelname)-4s [%(filename)s:%(lineno)d] %(message)s',
+    datefmt='%d-%m-%Y:%H:%M:%S',level=logging.INFO,filename='trendTracker.log')
+logger = logging.getLogger('trendTracker')
+
 dbClient = mongodb()
 db = "trendTracker"
 dbSymbol = dbClient[db]["symbol"]
 dbAccount = dbClient[db]["account"]
 dbPortofolio = dbClient[db]["portofolio"]
-dbTrend = dbClient[db]["trend"]
+# dbTrend = dbClient[db]["trend"]
 dbHistory = dbClient[db]["history"]
 
 def Symbols(symbolID, symbolType, allowUpdate, tickerID):
@@ -311,12 +316,15 @@ def convertDate(dateString):
     return result
 
 def coinStandardized(coin):
-    symbol = coin.lower()            
-    query = {"$or":[{"id": symbol},{"name": symbol},{"symbol":symbol}]}
-    projection = {"id":1,'_id':0}
-    result = dbTrend.find(query,projection)
-    id = result[0]["id"]
-    return id
+    try:
+        symbol = coin.lower()            
+        query = {"$or":[{"id": symbol},{"name": symbol},{"symbol":symbol}]}
+        projection = {"id":1,'_id':0}
+        result = dbHistory.find(query,projection)
+        id = result[0]["id"]
+        return id
+    except Exception as e:
+        logger.error(f"An Error occured in coinStandardized :: {e}")
 
 def main():
     print("dataModels")

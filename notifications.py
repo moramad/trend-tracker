@@ -109,10 +109,12 @@ def chartCommand(update, context):
     try:
         context.bot.send_chat_action(chat_id=update.effective_chat.id, action="typing")    
         coin = context.args[0]
+        print(coin)
         coin = coinStandardized(coin)
         print(f"request from {update.effective_chat.username} | request {coin}")    
         context.bot.send_photo(chat_id=update.effective_chat.id, photo=open(f'chart/chart_{coin}.png', 'rb'))  
-    except:
+    except Exception as e:
+        logger.error(f"An Error occured in chartCommand :: {e}")
         response = f"<b>File chart not found!</b> \n"
         context.bot.send_message(chat_id=update.effective_chat.id, text=response)
 
