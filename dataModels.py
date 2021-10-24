@@ -2,9 +2,8 @@ import json, pymongo
 from pydantic import BaseModel, Field
 from bson import ObjectId
 from typing import Optional
-from credentials import *
+from connSetting import *
 import dateutil.parser
-from credentials import *
 
 dbClient = mongodb()
 db = "trendTracker"

@@ -5,7 +5,7 @@ import requests, os
 from dataCatcher import *
 from dataModels import *
 from dataAnalyze import *
-from credentials import *
+from connSetting import *
 from requests import get
 
 

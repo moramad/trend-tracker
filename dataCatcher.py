@@ -115,8 +115,7 @@ def dataUpdater():
                 ath_date = convertDate(datatrend["market_data"]["ath_date"][currency])     
                 atl_date = convertDate(datatrend["market_data"]["atl_date"][currency])
                 ath_change_percentage = datatrend["market_data"]["ath_change_percentage"][currency]    
-                atl_change_percentage = datatrend["market_data"]["atl_change_percentage"][currency]        
-                updateTime = datatrend["updateTime"]
+                atl_change_percentage = datatrend["market_data"]["atl_change_percentage"][currency]                        
                 
                 # data prev
                 if initialize :

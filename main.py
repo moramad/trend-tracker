@@ -1,7 +1,6 @@
 from masterSymbols import *
 from masterAccounts import *
 from dataCatcher import *
-from coreAnalyzer import *
 from dataAnalyze import *
 import csv
 
